@@ -1,0 +1,7 @@
+/* 简约：用字重与留白建立层级，不添加色块。 */
+.resume.minimal { padding: calc(var(--pad, 40) * .8px) 60px 48px; }
+.resume.minimal h1 { font-size: var(--fs-h1, 2.15em); font-weight: 600; letter-spacing: .5px; }
+.resume.minimal h2 { font-size: var(--fs-h2, 1.14em); letter-spacing: 1px; color: var(--accent-text); margin: var(--section-gap, 24px) 0 7px; font-weight: 700; }
+.resume.minimal h3 { font-size: var(--fs-h3, 1.02em); font-weight: 600; margin: 0 0 2px; color: #333; }
+.resume.minimal li::marker { color: #8b95a1; font-size: .8em; }
+.resume.minimal .item-right { color: #626d7b; font-size: .9em; }

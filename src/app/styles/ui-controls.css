@@ -1,0 +1,67 @@
+/* 工作台共用控件；不包含正文重置，避免影响简历模板和打印。 */
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--ui-radius-md);
+  background: var(--panel);
+  color: var(--fg);
+  font: 400 14px/22px var(--ui-font);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--ui-duration) var(--ui-ease), background-color var(--ui-duration) var(--ui-ease), border-color var(--ui-duration) var(--ui-ease), box-shadow var(--ui-duration) var(--ui-ease);
+}
+.ui-button:hover:not(:disabled) { background: var(--hover); border-color: var(--border-strong-hover); }
+.ui-button:active:not(:disabled) { transform: translateY(1px); }
+.ui-button.ui-button-primary { border-color: transparent; background: var(--ui-primary-bg); color: var(--ui-primary-fg); }
+.ui-button.ui-button-primary:hover:not(:disabled) { background: var(--ui-primary-hover); }
+.ui-button.ui-button-active { border-color: transparent; background: var(--ui-selected); color: var(--fg); font-weight: 500; }
+.ui-button-sm { min-height: 32px; padding-inline: 10px; border-radius: var(--ui-radius-sm); font-size: 13px; line-height: 20px; }
+.ui-button:disabled, .ui-icon-button:disabled { opacity: .4; cursor: not-allowed; }
+.ui-input {
+  min-width: 0;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--ui-radius-md);
+  outline: none;
+  background: var(--panel);
+  color: var(--fg);
+  font: 400 14px/22px var(--ui-font);
+  transition: border-color var(--ui-duration), box-shadow var(--ui-duration);
+}
+.ui-input:hover { border-color: var(--border-strong-hover); }
+.ui-input:focus { border-color: var(--ui-accent); box-shadow: 0 0 0 2px var(--ui-focus); }
+.ui-input::placeholder { color: var(--ui-placeholder); }
+.ui-textarea { min-height: 60px; resize: vertical; font: 13px/22px var(--ui-font-mono); }
+.ui-select { appearance: none; min-width: 0; padding-block: 3px; border: 0; border-radius: var(--ui-radius-xs); background-color: transparent; color: var(--fg); font: 13px/20px var(--ui-font); white-space: nowrap; cursor: pointer; }
+.ui-select-wrap { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; min-width: 0; padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--ui-radius-sm); background: var(--panel-2); transition: background-color var(--ui-duration), border-color var(--ui-duration); }
+.ui-select-wrap:hover { background: var(--hover); border-color: var(--border-strong); }
+.ui-select-wrap:focus-within { border-color: var(--ui-accent); }
+.ui-icon-button { display: inline-flex; align-items: center; justify-content: center; padding: 4px; border: 0; border-radius: var(--ui-radius-sm); background: transparent; color: var(--muted); cursor: pointer; transition: color var(--ui-duration), background-color var(--ui-duration); }
+.ui-icon-button:hover { color: var(--fg); background: var(--hover); }
+.ui-field-label { display: block; margin-bottom: 6px; color: var(--muted); font: 400 12px/18px var(--ui-font); }
+.precision-popover { position: fixed; z-index: 50; min-width: 200px; padding: 8px; border: 1px solid var(--border); border-radius: var(--ui-radius-lg); background: var(--panel-raised); box-shadow: var(--shadow-soft); color: var(--fg); font: 14px/22px var(--ui-font); animation: ui-panel-in var(--ui-duration) var(--ui-ease); }
+.precision-popover[role='dialog'] { padding: 16px; }
+.precision-popover button { transition: color var(--ui-duration), background-color var(--ui-duration), border-color var(--ui-duration); }
+.ui-dialog-backdrop { background: var(--ui-overlay); }
+.ui-dialog-panel { animation: ui-panel-in var(--ui-duration) var(--ui-ease); }
+.ui-toast { max-width: calc(100vw - 24px); border-radius: var(--ui-radius-lg); }
+.ui-toast > span { min-width: 0; overflow-wrap: anywhere; }
+
+@keyframes ui-panel-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .precision-popover, .ui-dialog-panel { animation: none; }
+}
+@media (pointer: coarse) {
+  .ui-button, .ui-select-wrap { min-height: 40px; }
+  .ui-input { min-height: 40px; font-size: 16px; }
+}

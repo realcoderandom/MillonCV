@@ -1,0 +1,26 @@
+/* 技术精简模板：高密度单栏，样式隔离在当前模板内。 */
+.resume.technicalCompact { padding: calc(var(--pad, 37.8) * .7px) calc(var(--pad, 37.8) * 1px) calc(var(--pad, 37.8) * .8px); color: #202630; overflow-wrap: anywhere; }
+.resume.technicalCompact h1 { font-size: var(--fs-h1, 2.286em); line-height: 1.2; font-weight: 700; }
+.resume.technicalCompact .role-line { font-weight: 500; }
+.resume.technicalCompact .resume-basics .contact-link[href^="http"] { color: var(--accent-text) !important; }
+.resume.technicalCompact .technical-compact-section { margin-top: var(--section-gap, 12px); }
+.resume.technicalCompact h2 { margin: 0 0 6px; padding-bottom: 3px; border-bottom: 1px solid var(--accent-line); color: var(--accent-text); font-size: var(--fs-h2, 1.214em); line-height: 1.4; font-weight: 700; break-after: avoid; }
+.resume.technicalCompact .technical-compact-item + .technical-compact-item { margin-top: 11px; }
+.resume.technicalCompact .technical-compact-company { margin: 5px 0 6px; padding: 4px 8px; background: var(--accent-soft); }
+.resume.technicalCompact h3 { margin: 0; font-size: var(--fs-h3, 1.095em); font-weight: 700; }
+.resume.technicalCompact .item-right { color: #526071; font-size: .9em; }
+.resume.technicalCompact .technical-compact-project-head { margin: 4px 0 6px; }
+.resume.technicalCompact .technical-compact-project-head h3 { color: var(--accent-text); }
+.resume.technicalCompact .resume-subproject { margin-top: 8px; padding-left: 12px; }
+.resume.technicalCompact .subproject-head h4 { font-size: var(--fs-h3, 1.095em); }
+.resume.technicalCompact ul, .resume.technicalCompact ol { margin: 4px 0; padding-left: 1.35em; }
+.resume.technicalCompact ul { list-style-type: disc; }
+.resume.technicalCompact ul ul { list-style-type: circle; }
+.resume.technicalCompact ul ul ul { list-style-type: square; }
+.resume.technicalCompact li { margin: 3px 0; }
+.resume.technicalCompact li > p { margin: 0; }
+.resume.technicalCompact li > ul, .resume.technicalCompact li > ol { margin: 2px 0; padding-left: 1.3em; }
+.resume.technicalCompact code { padding: 0 3px; border-radius: 2px; background: #eef1f5; }
+@media print {
+  .resume.technicalCompact .technical-compact-company, .resume.technicalCompact .technical-compact-project-head { break-inside: avoid; break-after: avoid; }
+}

@@ -1,0 +1,16 @@
+/* 分页文档的基线与工作台一致，纸宽直接使用打印的物理单位。 */
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: auto; margin: 0; padding: 0; background: transparent; }
+body { font-size: 14px; letter-spacing: .01em; }
+.resume { width: 210mm; aspect-ratio: auto; min-height: 0; box-shadow: none; }
+.pagedjs_pages { display: flex; flex-direction: column; gap: 24px; width: 210mm; }
+.pagedjs_page { flex: none; margin: 0; background: white; box-shadow: 0 2px 12px rgba(0,0,0,.12); }
+.pagedjs_page .resume [data-resume-highlight] { outline: 2px solid #b79a56; outline-offset: 3px; }
+.pagedjs_page .resume [tabindex]:focus-visible { outline: 2px solid #b79a56; outline-offset: 3px; }
+@media print {
+  .pagedjs_pages { display: block; gap: 0; }
+  .pagedjs_page { width: 210mm; height: 297mm; margin: 0; box-shadow: none; break-inside: avoid; break-after: page; }
+  .pagedjs_page:last-child { break-after: auto; }
+  .pagedjs_page .resume [data-resume-highlight], .pagedjs_page .resume [tabindex]:focus-visible { outline: none; }
+}

@@ -1,0 +1,7 @@
+/* 重点色：收紧标题条，让经历优先、次要模块退后。 */
+.resume.focus { padding: calc(var(--pad, 40) * .7px) 52px calc(var(--pad, 40) * 1px); }
+.resume.focus h1 { font-size: var(--fs-h1, 2.05em); color: #1a2533; font-weight: 700; }
+.resume.focus h2 { font-size: var(--fs-h2, 1.14em); color: var(--accent-text); background: var(--accent-soft); border-left: 3px solid var(--accent-text); padding: 3px 10px; margin: var(--section-gap, 20px) 0 7px; font-weight: 700; }
+.resume.focus section[data-section-type="custom"] > h2 { background: transparent; border-left: 0; border-bottom: 1px solid #d9e0e8; padding: 0 0 4px; }
+.resume.focus h3 { font-size: var(--fs-h3, 1.05em); margin: 0 0 2px; color: #222; font-weight: 700; }
+.resume.focus .item-right { color: #626d7b; font-size: .9em; }

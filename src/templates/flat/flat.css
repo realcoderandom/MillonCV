@@ -1,0 +1,10 @@
+/* 平面大气：保留平直色带，统一白底与正文对齐轴。 */
+.resume.flat { padding: 0 0 40px; background: #fff; }
+.resume.flat header { background: var(--accent-band); color: var(--accent-on-band); padding: calc(var(--pad, 40) * .6px) 48px 18px; --role-color: var(--accent-on-band); --contact-color: var(--accent-on-band); }
+.resume.flat header h1 { font-size: var(--fs-h1, 2.1em); color: #fff; font-weight: 700; }
+.resume.flat header:has(.resume-summary) { padding-bottom: 0; }
+.resume.flat header .resume-summary { color: #475569; background: #fff; margin: 2px -48px 0; padding: 14px 48px 0; }
+.resume.flat > section { padding: 0 48px; }
+.resume.flat h2 { font-size: var(--fs-h2, 1.12em); background: var(--accent-soft); color: var(--accent-text); padding: 3px 48px; margin: var(--section-gap, 20px) -48px 7px; font-weight: 700; letter-spacing: .5px; }
+.resume.flat h3 { font-size: var(--fs-h3, 1.05em); margin: 0 0 2px; color: #243041; font-weight: 700; }
+.resume.flat .item-right { color: #5c6a7b; font-size: .9em; }

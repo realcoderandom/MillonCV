@@ -1,0 +1,98 @@
+/* Harness 实测语义色的精简映射；主题选择器沿用应用约定，供 body 上的浮层共同使用。
+   参考：deepseek-harness-design-extract/reviewed-variables.css（MIT）。
+   --ui-* 只描述工作台；简历纸张的 --accent / --font / --fs 仍由模板独立注入。 */
+@layer base {
+  :root {
+    color-scheme: dark;
+    --ui-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --ui-font-mono: "SF Mono", "JetBrains Mono", "Fira Code", Consolas, "Liberation Mono", Menlo, "PingFang SC", "Microsoft YaHei", monospace;
+    --ui-radius-xs: 4px;
+    --ui-radius-sm: 8px;
+    --ui-radius-md: 12px;
+    --ui-radius-lg: 16px;
+    --ui-radius-panel: 28px;
+    --ui-duration-fast: 100ms;
+    --ui-duration: 180ms;
+    --ui-ease: cubic-bezier(.4, 0, .2, 1);
+    --ui-bg: #151517;
+    --ui-sidebar: #1b1b1c;
+    --ui-inset: #232324;
+    --ui-raised: #232324;
+    --ui-preview: #151517;
+    --ui-text: #f9fafb;
+    --ui-text-secondary: #cfd3d6;
+    --ui-text-muted: #adb2b8;
+    --ui-placeholder: #81858c;
+    --ui-border: #ffffff0f;
+    --ui-border-strong: #ffffff1f;
+    --ui-border-hover: #ffffff3d;
+    --ui-hover: #ffffff14;
+    --ui-selected: #ffffff17;
+    --ui-accent: #7aaaff;
+    --ui-accent-soft: #34415b;
+    --ui-focus: #7aaaff33;
+    --ui-selection: #4176e666;
+    --ui-primary-bg: #f9fafb;
+    --ui-primary-hover: #ebeef2;
+    --ui-primary-fg: #0f1115;
+    --ui-danger: #f25a5a;
+    --ui-danger-fill: #c73535;
+    --ui-overlay: #0000007a;
+    --ui-toast-bg: #353638;
+    --ui-toast-fg: #fff;
+    --ui-shadow-panel: 0 0 0 .5px #ffffff1f, 0 4px 16px #00000008, 0 0 24px #00000008;
+    --ui-shadow-paper: 0 2px 8px #0000001f, 0 12px 32px #00000024;
+
+    /* 兼容既有界面组件，避免迁移主题时改动编辑与持久化逻辑。 */
+    --bar-bg: var(--ui-sidebar);
+    --bar-fg: var(--ui-text);
+    --panel: var(--ui-bg);
+    --panel-2: var(--ui-inset);
+    --panel-raised: var(--ui-raised);
+    --border: var(--ui-border);
+    --border-strong: var(--ui-border-strong);
+    --border-strong-hover: var(--ui-border-hover);
+    --fg: var(--ui-text);
+    --fg-dim: var(--ui-text-secondary);
+    --muted: var(--ui-text-muted);
+    --accent: var(--ui-accent);
+    --accent-2: var(--ui-primary-bg);
+    --accent-hover: var(--ui-primary-hover);
+    --accent-contrast: var(--ui-primary-fg);
+    --accent-soft: var(--ui-accent-soft);
+    --danger: var(--ui-danger);
+    --hover: var(--ui-hover);
+    --preview-bg: var(--ui-preview);
+    --shadow-soft: var(--ui-shadow-panel);
+    --shadow-paper: var(--ui-shadow-paper);
+  }
+
+  :root[data-ui-theme='light'] {
+    color-scheme: light;
+    --ui-bg: #fff;
+    --ui-sidebar: #f9fafb;
+    --ui-inset: #f5f6f7;
+    --ui-raised: #fff;
+    --ui-preview: #ebeef2;
+    --ui-text: #0f1115;
+    --ui-text-secondary: #61666b;
+    --ui-text-muted: #61666b;
+    --ui-placeholder: #81858c;
+    --ui-border: #0000000f;
+    --ui-border-strong: #0000001f;
+    --ui-border-hover: #0000003d;
+    --ui-hover: #2631480f;
+    --ui-selected: #26314814;
+    --ui-accent: #4176e6;
+    --ui-accent-soft: #e4edfd;
+    --ui-focus: #4176e629;
+    --ui-selection: #4176e633;
+    --ui-primary-bg: #0f1115;
+    --ui-primary-hover: #43454a;
+    --ui-primary-fg: #fff;
+    --ui-danger: #d1242f;
+    --ui-overlay: #0000003d;
+    --ui-shadow-panel: 0 0 0 .5px #0000001a, 0 4px 16px #00000008, 0 0 24px #00000008;
+    --ui-shadow-paper: 0 1px 3px #0f11150a, 0 8px 28px #0f11150a;
+  }
+}

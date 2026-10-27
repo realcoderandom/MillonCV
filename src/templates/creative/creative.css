@@ -1,0 +1,8 @@
+/* 创意：只使用一种主色，短色线替代胶囊与橙色装饰。 */
+.resume.creative { padding: calc(var(--pad, 40) * .8px) 52px 44px; }
+.resume.creative h1 { font-size: var(--fs-h1, 2.25em); color: var(--accent-text); font-weight: 700; }
+.resume.creative h2 { font-size: var(--fs-h2, 1.15em); color: var(--accent-text); border-bottom: 2px solid var(--accent-line); padding-bottom: 4px; margin: var(--section-gap, 22px) 0 7px; font-weight: 700; }
+.resume.creative h3 { font-size: var(--fs-h3, 1.05em); margin: 0 0 2px; color: #29313d; font-weight: 700; }
+.resume.creative li::marker { color: var(--accent-text); }
+.resume.creative a:not(.contact-link) { text-decoration: underline; text-underline-offset: 3px; }
+.resume.creative .item-right { color: #626d7b; font-size: .9em; }

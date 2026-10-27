@@ -1,0 +1,14 @@
+/* 商务：色带只承载身份，摘要在同一基本信息模块内使用白底。 */
+.resume.professional { padding: 0 0 40px; }
+.resume.professional .pf-head { background: var(--accent-band); color: var(--accent-on-band); }
+.resume.professional .pf-head header { padding: calc(var(--pad, 40) * .6px) 48px 18px; --role-color: var(--accent-on-band); --contact-color: var(--accent-on-band); }
+.resume.professional .pf-head h1 { font-size: var(--fs-h1, 2.05em); font-weight: 700; }
+.resume.professional .pf-head header:has(.resume-summary) { padding-bottom: 0; }
+.resume.professional .pf-head .resume-summary { background: #fff; color: #475569; margin: 2px -48px 0; padding: 14px 48px 0; }
+.resume.professional .pf-body { padding: 16px 48px 0; }
+.resume.professional .pf-body > section:first-child > h2 { margin-top: 0; }
+.resume.professional .pf-head:not(:has(.resume-identity, .contact-item, .resume-summary, .resume-portrait)), .resume.professional .pf-body:empty { display: none; }
+.resume.professional .pf-head:not(:has(.resume-identity, .contact-item, .resume-summary, .resume-portrait)) + .pf-body { padding-top: calc(var(--pad, 40) * .7px); }
+.resume.professional h2 { font-size: var(--fs-h2, 1.15em); color: var(--accent-text); letter-spacing: .5px; border-bottom: 1px solid var(--accent-line); padding-bottom: 4px; margin: var(--section-gap, 20px) 0 6px; }
+.resume.professional h3 { font-size: var(--fs-h3, 1.05em); margin: 0 0 2px; color: #26364b; font-weight: 700; }
+.resume.professional .item-right { color: #5c6a7b; font-size: .9em; }

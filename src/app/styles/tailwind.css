@@ -1,0 +1,74 @@
+/* Tailwind v4 跳过 preflight，保留简历模板的列表与正文基线。
+   工作台主题和共用控件分别见 ui-theme.css / ui-controls.css。 */
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
+
+/* ===== base：原生控件基线与滚动条 ===== */
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body, #root { height: 100%; }
+  body {
+    font-family: var(--ui-font);
+    background: var(--bar-bg);
+    color: var(--fg);
+    font-size: 14px;
+    letter-spacing: 0.01em;
+  }
+  button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible {
+    outline: 2px solid var(--ui-accent);
+    outline-offset: 2px;
+  }
+  /* 跳过 Tailwind preflight 后必须补齐的原生控件基线。
+     具体按钮的边框与背景由组件 utilities 决定；未声明外观的菜单项保持透明。 */
+  button {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+  button, select, input, textarea { accent-color: var(--ui-accent); }
+  ::selection { background: var(--ui-selection); }
+
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong-hover); border: 2px solid transparent; border-radius: 8px; background-clip: padding-box; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-strong-hover); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 预览工具栏按自身宽度逐级收紧文案，固定双栏结构不变。 */
+.preview-toolbar { container: preview-toolbar / inline-size; }
+@container preview-toolbar (max-width: 600px) {
+  .preview-toolbar-result { display: none; }
+}
+@container preview-toolbar (max-width: 300px) {
+  .preview-toolbar-label { display: none; }
+}
+
+/* ===== utilities：select 右侧箭头背景（背景图无法用工具类表达，提取为共享 utility） ===== */
+@layer utilities {
+  .chevron-arrow {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236c7086' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+  }
+}
+
+/* 浅色主题：chevron 箭头改用冷中性描边（svg data-url 无法引用 CSS 变量，单独覆盖） */
+:root[data-ui-theme='light'] .chevron-arrow {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23626b78' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+}

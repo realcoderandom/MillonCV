@@ -1,0 +1,57 @@
+/* 打印 / 导出 PDF：输出与预览相同的分页纸张，保留矢量文字。
+   触发入口：lib/pdf.ts → window.print()，用户在打印对话框选「另存为 PDF」 */
+@media print {
+  @page { size: A4; margin: 0; }
+  html, body, #root, .app {
+    height: auto;
+    background: #fff;
+    overflow: visible;
+    display: block;
+  }
+  /* 隐藏一切非简历 UI */
+  [data-no-print], .preview-status-bar, .skip-to-editor { display:none !important; }
+  .resume [data-resume-highlight], .resume [tabindex] { outline:none !important; }
+  .toolbar, .sidebar, .editor-pane, .pane-head, .theme-panel,
+  .preview-toolbar, .resize-handle { display: none !important; }
+  .workspace { display:block; }
+  .workspace > .preview-pane {
+    position:static;
+    visibility:visible !important;
+    width:auto;
+    background: #fff;
+    padding: 0;
+    overflow: visible;
+    display: block;
+  }
+  /* 取消预览滚动容器的 padding/居中/裁剪，让纸张贴边输出 */
+  .preview-scroll {
+    padding: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+    justify-content: flex-start !important;
+  }
+  /* 屏幕侧 .resume-page-wrap 用 zoom 等比缩放适配预览区，打印时固定 A4 宽并重置 zoom */
+  .resume-page-wrap { width: 210mm; zoom: 1 !important; }
+  .resume {
+    width: 210mm;
+    aspect-ratio: auto;
+    box-shadow: none;
+    margin: 0;
+  }
+  .resume h1, .resume h2, .resume h3 { page-break-after: avoid; break-after: avoid; }
+  /* 项目/经历条目与长列表允许跨页，避免整块被推到下一页后留下大片空白；
+     标题行和最小内容单元仍保持完整，分页只发生在段落或列表项之间。 */
+  .resume blockquote, .resume li, .resume p, .resume hr,
+  .resume .item-card, .resume .item-head {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .resume .item-head {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  .resume, .resume * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

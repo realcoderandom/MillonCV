@@ -1,0 +1,46 @@
+# 依赖
+node_modules
+.pnpm-store
+
+# 构建产物
+dist
+dist-ssr
+*.local
+
+# 编辑器 / IDE
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 日志
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 临时输出与验证产物
+.playwright-mcp/
+/output/
+
+# 环境变量
+.env
+.env.*
+!.env.example
+
+# 临时文件
+*.tmp
+*.bak
+
+# AI / 工具配置目录（本地专属，不纳入版本控制）
+.claude
+.agents
+.spec-workflow
+skills-lock.json
+CLAUDE.md

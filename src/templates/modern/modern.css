@@ -1,0 +1,9 @@
+/* 现代：通栏页首配浅色技能栏，正文优先获得阅读宽度。 */
+.resume.modern { --default-sidebar-width: 30%; --sidebar-background: var(--accent-soft); }
+.resume.modern h1 { font-size: var(--fs-h1, 2.05em); color: #24374a; font-weight: 700; }
+.resume.modern .md-side { background: var(--sidebar-background); color: #364454; --subtitle-color: #526071; }
+.resume.modern h2 { font-size: var(--fs-h2, 1.13em); color: var(--accent-text); border-left: 3px solid var(--accent-line); padding-left: 9px; margin: var(--section-gap, 20px) 0 7px; font-weight: 700; }
+.resume.modern .md-side h2 { font-size: var(--fs-h2, 1.05em); border-left: none; border-bottom: 1px solid var(--accent-line); padding: 0 0 5px; }
+.resume.modern h3 { font-size: var(--fs-h3, 1.04em); margin: 0 0 2px; color: #2c3e50; font-weight: 700; }
+.resume.modern .md-side :is(p, li) { font-size: .96em; }
+.resume.modern .item-right { color: #5a6878; font-size: .9em; }

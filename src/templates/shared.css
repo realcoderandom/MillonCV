@@ -1,0 +1,104 @@
+/* 简历共享原子：固定 A4 设计宽度，预览只缩放，不改变正文换行。 */
+.resume {
+  width: var(--page-w, 794px);
+  aspect-ratio: 210 / 297;
+  background: #fff;
+  color: #222;
+  box-shadow: var(--shadow-paper, 0 14px 32px rgba(42,42,40,.13));
+  font-size: var(--fs, 14px);
+  line-height: var(--lh, 1.6);
+  font-family: var(--font, "Helvetica Neue", Arial, "PingFang SC", sans-serif);
+  transition: box-shadow .2s;
+}
+.resume::selection, .resume ::selection { background: #c7d8f4; color: #202630; }
+.resume p { margin: 4px 0; }
+.resume a { color: var(--accent-text, #1a365d); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.resume strong { font-weight: 700; }
+.resume em { font-style: italic; }
+.resume code { font-family: "SF Mono", Menlo, monospace; background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: .9em; }
+.resume hr { border: none; border-top: 1px solid #ddd; margin: 12px 0; }
+.resume section blockquote { margin: 8px 0; border-left: none; padding-left: 0; color: inherit; font-style: normal; }
+.resume ul, .resume ol { padding-left: 1.45em; margin: 4px 0; }
+.resume li { margin: 2px 0; }
+.resume ul { list-style-type: square; }
+.resume ul ul { list-style-type: circle; }
+.resume ul ul ul { list-style-type: square; }
+.resume ol ol { list-style-type: lower-alpha; }
+.resume ol ol ol { list-style-type: lower-roman; }
+.resume li > ul, .resume li > ol { margin: 1px 0 2px; padding-left: 1.55em; }
+.resume li > p { margin: 0; }
+.resume .item > div > ul > li + li, .resume .item > div > ol > li + li { margin-top: 5px; }
+.resume .item > div > ul ul > li + li, .resume .item > div > ol ol > li + li { margin-top: 1px; }
+.resume .item + .item { margin-top: 14px; }
+
+/* 公司与岗位分出字重；日期保持完整，过长时整体进入下一行。 */
+.resume .item-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 16px; }
+.resume .item-head > :is(h3, h4) { flex: 1 1 60%; min-width: 0; overflow-wrap: anywhere; line-height: 1.45; }
+.resume .item-subtitle { font-size: .95em; font-weight: 400; color: var(--subtitle-color, #4b5563); }
+.resume .item-head > .item-right { flex: 0 0 auto; max-width: 100%; margin-left: auto; text-align: right; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; line-height: 1.45; }
+.resume .resume-subproject { margin-top: 8px; padding-left: 12px; border-left: 1px solid #dce1e8; }
+.resume .subproject-head h4 { margin: 0 0 2px; font-size: var(--fs-h3, 1em); font-weight: 700; color: var(--accent-text); break-after: avoid; }
+.resume .row-split { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 1em; }
+.resume .row-split .rs-left { flex: 1 1 60%; min-width: 0; overflow-wrap: anywhere; }
+.resume .row-split .rs-right { flex: 0 1 auto; max-width: 100%; margin-left: auto; text-align: right; overflow-wrap: anywhere; }
+
+/* 身份信息先于照片阅读；无照只有一列，大照片也由页首完整容纳。 */
+.resume header.resume-basics { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: 8px 20px; margin: 0; break-inside: avoid; }
+.resume header.resume-basics.has-photo { grid-template-columns: minmax(0, 1fr) var(--photo-width, 84px); }
+.resume .resume-basics-main { min-width: 0; }
+.resume .resume-basics-main:empty { display: none; }
+.resume .resume-portrait { grid-column: 2; grid-row: 1; display: block; width: 100%; height: auto; aspect-ratio: 7 / 9; object-fit: cover; margin: 0; border: 1px solid rgba(100,116,139,.18); }
+.resume .resume-summary { grid-column: 1 / -1; min-width: 0; margin: 0; border: 0; padding: 0; color: var(--summary-color, #475569); font-style: normal; text-align: left; }
+.resume .resume-summary > div > :first-child { margin-top: 0; }
+.resume .resume-summary > div > :last-child { margin-bottom: 0; }
+.resume header.resume-basics:not(:has(.resume-identity, .contact-item, .resume-summary, .resume-portrait)) { display: none; }
+.resume header.resume-basics h1 { min-width: 0; max-width: 100%; margin: 0; line-height: 1.2; overflow-wrap: anywhere; }
+.resume header.resume-basics + section > h2 { margin-top: min(var(--section-gap, 22px), 16px); }
+.resume header.resume-basics:not(:has(.resume-identity, .contact-item, .resume-summary, .resume-portrait)) + section > h2 { margin-top: 0; }
+.resume > section:first-child > h2, .resume > .accent-soften > section:first-child > h2 { margin-top: 0; }
+.resume .resume-identity { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; min-width: 0; margin-bottom: 7px; }
+.resume .resume-identity-details { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; min-width: 0; max-width: 100%; }
+.resume .contact-line { font-size: .92em; color: var(--contact-color, #526071); overflow-wrap: anywhere; }
+.resume .role-line { font-size: 1.04em; font-weight: 500; color: var(--role-color, #334155); }
+.resume .resume-identity-details > .contact-line { display: inline-flex; align-items: baseline; gap: 5px; min-width: 0; max-width: 100%; margin: 0; line-height: 1.35; }
+.resume .resume-identity-details > .contact-line > span { min-width: 0; }
+.resume .contact-details, .resume .contact-group { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 14px; }
+.resume .contact-details { margin: 0; line-height: 1.5; }
+.resume .contact-group { min-width: 0; max-width: 100%; }
+.resume .contact-item { display: inline-flex; align-items: baseline; gap: 4px; min-width: 0; max-width: 100%; }
+.resume .contact-icon { flex-shrink: 0; opacity: .75; align-self: center; }
+.resume .contact-link { min-width: 0; color: inherit !important; overflow-wrap: anywhere; text-decoration: none; }
+.resume .contact-link:hover { text-decoration: underline; }
+
+/* 仅无照页首居中；有照的姓名、联系信息统一回到左对齐轴。 */
+.resume:is(.classic, .academic) header:not(.has-photo) :is(.resume-identity, .resume-identity-details, .contact-details, .contact-group) { justify-content: center; }
+
+/* 双栏只重排视图，不移动 sections 数据；空栏自然让位，仍支持用户自定义布局。 */
+.resume:is(.modern, .tech, .twoColumn) { display: flex; flex-direction: column; min-height: 297mm; }
+.resume:is(.modern, .tech, .twoColumn) .resume-column-header { padding: calc(var(--pad, 40) * .7px) 40px 18px; border-bottom: 1px solid #dde3ea; }
+.resume:is(.modern, .tech, .twoColumn) .resume-column-header:not(:has(.resume-identity, .contact-item, .resume-summary, .resume-portrait)) { display: none; }
+.resume:is(.modern, .tech, .twoColumn) .resume-columns { display: grid; grid-template-columns: var(--sidebar-width, var(--default-sidebar-width, 30%)) minmax(0, 1fr); flex: 1; }
+.resume:is(.modern, .tech, .twoColumn) .resume-columns:not([data-resume-columns="two"]) > :only-child { grid-column: 1 / -1; }
+/* 分页后侧栏可能已结束，主栏仍保留原轨道和栏宽，不能按片段的 :only-child 重新铺满。 */
+.resume:is(.modern, .tech, .twoColumn) .resume-columns[data-resume-columns="two"] { background: linear-gradient(to right, var(--sidebar-background) 0 var(--sidebar-width, var(--default-sidebar-width, 30%)), transparent var(--sidebar-width, var(--default-sidebar-width, 30%))); }
+.resume:is(.modern, .tech, .twoColumn) .resume-columns[data-resume-columns="two"] > .resume-column-side { grid-column: 1; }
+.resume:is(.modern, .tech, .twoColumn) .resume-columns[data-resume-columns="two"] > .resume-column-main { grid-column: 2; }
+.resume:is(.modern, .tech, .twoColumn) .resume-column-side { min-width: 0; padding: 20px 20px 36px; overflow-wrap: anywhere; }
+.resume:is(.modern, .tech, .twoColumn) .resume-column-main { min-width: 0; padding: 20px 32px 40px; overflow-wrap: anywhere; }
+.resume:is(.modern, .tech, .twoColumn) :is(.resume-column-main, .resume-column-side) > section:first-child > h2 { margin-top: 0; }
+.resume:is(.modern, .tech, .twoColumn) .resume-column-side .item-head > :is(h3, h4) { flex-basis: 100%; }
+.resume:is(.modern, .tech, .twoColumn) .resume-column-side .item-head > .item-right { margin-left: 0; text-align: left; }
+.resume:is(.modern, .tech, .twoColumn) .resume-column-side .item-subtitle { display: block; }
+
+/* 用户将基本信息放回窄侧栏时，照片继续并排并按可用栏宽缩小。 */
+.resume:is(.modern, .tech, .twoColumn) .resume-column-side .resume-basics.has-photo { grid-template-columns: minmax(0, 1fr) min(var(--photo-width, 84px), 36%); gap: 8px; }
+.resume:is(.modern, .tech, .twoColumn) .resume-column-side .resume-identity { display: block; }
+.resume:is(.modern, .tech, .twoColumn) .resume-column-side .resume-identity-details { margin-top: 5px; }
+.resume:is(.modern, .tech, .twoColumn) .resume-column-side .contact-group { flex-basis: 100%; }
+.resume:is(.modern, .tech, .twoColumn) .resume-column-side .contact-item { flex-basis: 100%; }
+
+/* 深底使用经过对比度校正的同色系文字，不影响用户保存的主色。 */
+.resume .accent-soften { --accent: var(--accent-on-dark); --accent-text: var(--accent-on-dark); }
+
+/* 分页文档只等比缩放，屏幕不再用背景线模拟分页。 */
+.resume-page-wrap { position: relative; width: fit-content; margin: 0 auto; --page-w: 794px; }

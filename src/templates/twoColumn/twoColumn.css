@@ -1,0 +1,11 @@
+/* 两栏紧凑：学历使用浅底与独立日期，紧凑但保留完整内容。 */
+.resume.twoColumn { --default-sidebar-width: 32%; --sidebar-background: var(--accent-soft); }
+.resume.twoColumn h1 { font-size: var(--fs-h1, 2em); color: #1f2d3e; font-weight: 700; }
+.resume.twoColumn .tc-side { background: var(--sidebar-background); color: #344256; --subtitle-color: #526071; }
+.resume.twoColumn h2 { font-size: var(--fs-h2, 1.1em); color: var(--accent-text); border-bottom: 1px solid var(--accent-line); padding-bottom: 4px; margin: var(--section-gap, 18px) 0 6px; font-weight: 700; }
+.resume.twoColumn .tc-side h2 { font-size: var(--fs-h2, 1.04em); }
+.resume.twoColumn h3 { font-size: var(--fs-h3, 1.02em); margin: 0 0 2px; color: #27374b; font-weight: 700; }
+.resume.twoColumn .tc-side :is(p, li) { font-size: .94em; }
+.resume.twoColumn .tc-side .item-subtitle { font-size: .95em; }
+.resume.twoColumn .item-right { color: #5a6878; font-size: .9em; }
+.resume.twoColumn .item + .item { margin-top: 12px; }

@@ -1,0 +1,219 @@
+/* 富文本编辑区样式：全部用项目 CSS 变量，深浅主题自动跟随
+   仅覆盖 ProseMirror 文档内容外观；工具栏样式在 RichEditor.tsx 内联 */
+.rich-editor-wrap {
+  padding: 25px 26px 60px;
+}
+
+.rich-editor-prose {
+  outline: none;
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100%;
+}
+
+.rich-editor-prose:focus {
+  outline: none;
+}
+
+/* 标题 */
+.rich-editor-prose h1 {
+  font-size: 25px;
+  font-weight: 600;
+  margin: 18px 0 8px;
+  color: var(--fg);
+  line-height: 1.3;
+}
+.rich-editor-prose h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 24px 0 9px;
+  color: var(--fg);
+}
+.rich-editor-prose h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 12px 0 4px;
+  color: var(--fg);
+}
+.rich-editor-prose h4 { margin: 10px 0 4px; font-size: 13px; font-weight: 600; color: var(--accent); }
+.rich-editor-prose .resume-editor-photo { display: block; width: 84px; height: 108px; object-fit: cover; margin: 8px 0; }
+.rich-editor-prose .resume-editor-photo.ProseMirror-selectednode { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* 段落 */
+.rich-editor-prose p {
+  margin: 4px 0;
+}
+
+/* 行内样式 */
+.rich-editor-prose strong {
+  font-weight: 600;
+  color: var(--fg);
+}
+.rich-editor-prose em {
+  font-style: italic;
+}
+/* 行内代码：底色随主题（深色下避免接近白色的刺眼底色）。
+   color-mix 基于正文 --fg 叠透明：深色下呈柔和浅紫蓝、浅色下接近预览侧 #f0f0f0 灰底 */
+.rich-editor-prose code {
+  font-family: var(--ui-font-mono);
+  font-size: 12px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+  color: var(--fg);
+}
+
+/* 条目头的行内代码用于保留字段边界，显示仍沿用标题的字体和颜色。 */
+.rich-editor-prose :is(h3, h4) code {
+  font: inherit;
+  color: inherit;
+  background: none;
+  padding: 0;
+  border: 0;
+}
+.rich-editor-prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* 列表 */
+.rich-editor-prose ul {
+  padding-left: 1.4em;
+  margin: 4px 0;
+}
+.rich-editor-prose ol {
+  padding-left: 1.6em;
+  margin: 4px 0;
+}
+.rich-editor-prose li {
+  margin: 2px 0;
+}
+.rich-editor-prose ul li {
+  list-style-type: square;
+}
+.rich-editor-prose ol li {
+  list-style-type: decimal;
+}
+.rich-editor-prose ul ul li {
+  list-style-type: circle;
+}
+.rich-editor-prose ul ul ul li {
+  list-style-type: square;
+}
+.rich-editor-prose ol ol li {
+  list-style-type: lower-alpha;
+}
+.rich-editor-prose ol ol ol li {
+  list-style-type: lower-roman;
+}
+.rich-editor-prose li > ul,
+.rich-editor-prose li > ol {
+  margin: 1px 0 2px;
+  padding-left: 1.55em;
+}
+.rich-editor-prose li > p {
+  margin: 0;
+}
+
+/* 引用：富文本无法按模块区分 blockquote 节点，统一弱化为仅增加行间距。
+   个人信息简介的引用块样式由预览侧（.resume header blockquote）保留 */
+.rich-editor-prose blockquote {
+  margin: 8px 0;
+  border-left: none;
+  padding-left: 0;
+  color: inherit;
+}
+
+/* 分割线 */
+.rich-editor-prose hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 12px 0;
+}
+
+/* 占位符（空文档时） */
+.rich-editor-prose p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+
+/* 选区高亮跟随主题 */
+.rich-editor-prose ::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* 编辑器工具与正文使用同一表面，低频格式收入菜单。 */
+.rich-editor-shell { display:flex; flex:1; flex-direction:column; min-height:0; overflow:hidden; background:var(--panel); }
+.rich-format-toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:2px; flex-shrink:0; min-height:44px; padding:6px 12px; border-bottom:1px solid var(--border); background:var(--panel); }
+.rich-tool-button { display:inline-flex; align-items:center; justify-content:center; width:30px; height:32px; flex-shrink:0; padding:0; border:0; border-radius:var(--ui-radius-sm); background:transparent; color:var(--muted); cursor:pointer; }
+.rich-tool-button:hover { color:var(--fg); background:var(--hover); }
+.rich-tool-button[aria-pressed='true'], .rich-menu-tool[aria-checked='true'] { color:var(--fg); background:var(--ui-selected); }
+.rich-tool-button:disabled { opacity:.35; cursor:not-allowed; }
+.rich-tool-divider { width:1px; height:15px; margin:0 3px; flex-shrink:0; background:var(--border); }
+.rich-heading-select { width:80px; min-height:32px; border:0; border-radius:var(--ui-radius-sm); padding:3px 6px; background:var(--ui-inset); color:var(--fg); font-size:12px; cursor:pointer; }
+.rich-format-menu { display:flex; flex-direction:column; gap:3px; min-width:190px; }
+.rich-menu-tool { display:flex; align-items:center; gap:9px; min-height:34px; border:0; border-radius:var(--ui-radius-sm); padding:7px 9px; background:transparent; color:var(--fg-dim); font-size:12px; text-align:left; cursor:pointer; }
+.rich-menu-tool:hover { background:var(--hover); }
+.rich-editor-scroll { flex:1; min-height:0; overflow:auto; }
+.rich-editor-prose > h1:first-child { margin-top:0; }
+.source-editor-shell {
+  --source-heading:#adc8ee;
+  --source-strong:#e2c399;
+  --source-link:#91c9bb;
+  --source-marker:#acb7c6;
+  --source-code:#cfbea9;
+  display:grid; grid-template-columns:38px minmax(0,1fr); flex:1; min-height:0; overflow:hidden; background:var(--panel);
+}
+:root[data-ui-theme='light'] .source-editor-shell {
+  --source-heading:#315d98;
+  --source-strong:#805424;
+  --source-link:#286d60;
+  --source-marker:#667185;
+  --source-code:#775936;
+}
+.source-line-numbers { min-height:0; overflow:hidden; padding:16px 8px 16px 0; background:var(--panel-2); color:var(--muted); font:11px/22px var(--ui-font-mono); text-align:right; white-space:pre; user-select:none; }
+.source-editor-stage { position:relative; min-width:0; min-height:0; overflow:hidden; }
+/* 两层共用字形度量，仅输入层滚动；高亮层跟随位移，不改变原生选区、撤销和光标。 */
+.source-editor, .source-syntax {
+  padding:16px 14px; border:0; border-radius:0; margin:0; color:var(--fg);
+  font:13px/22px var(--ui-font-mono); letter-spacing:normal; font-kerning:none; font-variant-ligatures:none; tab-size:2; white-space:pre; text-align:left;
+}
+.source-syntax-viewport { position:absolute; inset:0 auto auto 0; width:100%; height:100%; overflow:hidden; pointer-events:none; user-select:none; }
+.source-syntax { width:max-content; min-width:100%; background:transparent; transform-origin:top left; }
+.source-syntax::after { content:'\200b'; }
+.source-editor {
+  position:relative; display:block; min-width:0; min-height:0; width:100%; height:100%; resize:none; overflow:auto;
+  background:transparent; color:transparent; -webkit-text-fill-color:transparent; caret-color:var(--fg);
+}
+.source-editor:focus-visible { outline:0; box-shadow:inset 2px 0 var(--ui-accent); }
+.source-editor::placeholder { color:var(--ui-placeholder); -webkit-text-fill-color:var(--ui-placeholder); }
+.source-editor::selection { background:var(--ui-selection); color:transparent; -webkit-text-fill-color:transparent; }
+.source-token-heading-1, .source-token-heading-2, .source-token-heading-3 { color:var(--source-heading); font-weight:600; }
+.source-token-heading-3 { color:var(--fg-dim); }
+.source-token-punctuation, .source-token-comment { color:var(--muted); }
+.source-token-list { color:var(--source-marker); font-weight:600; }
+.source-token-strong { color:var(--source-strong); font-weight:600; }
+.source-token-emphasis { color:var(--fg-dim); font-style:italic; }
+.source-token-link { color:var(--source-link); text-decoration:underline; text-decoration-color:color-mix(in srgb, var(--source-link) 50%, transparent); text-underline-offset:3px; }
+.source-token-destination { color:var(--source-link); }
+.source-token-code { color:var(--source-code); background:color-mix(in srgb, var(--fg) 4%, transparent); }
+.source-token-quote, .source-token-deleted { color:var(--fg-dim); }
+.source-token-deleted { text-decoration:line-through; }
+/* 输入法组合期间使用原生文字，保留候选词、组合下划线与选区反馈。 */
+.source-editor-stage[data-composing='true'] .source-syntax-viewport { visibility:hidden; }
+.source-editor-stage[data-composing='true'] .source-editor { color:var(--fg); -webkit-text-fill-color:var(--fg); }
+.source-editor-stage[data-composing='true'] .source-editor::selection { color:var(--fg); -webkit-text-fill-color:var(--fg); }
+@media (forced-colors:active) {
+  .source-syntax-viewport { visibility:hidden; }
+  .source-editor, .source-editor-stage[data-composing='true'] .source-editor { color:CanvasText; -webkit-text-fill-color:CanvasText; caret-color:CanvasText; }
+  .source-editor:focus-visible { outline:2px solid Highlight; outline-offset:-2px; }
+  .source-editor::placeholder { color:GrayText; -webkit-text-fill-color:GrayText; }
+  .source-editor::selection, .source-editor-stage[data-composing='true'] .source-editor::selection { color:HighlightText; -webkit-text-fill-color:HighlightText; background:Highlight; }
+}
+@media (max-width:800px) { .rich-editor-wrap { padding:22px 20px 45px; } }
+@media (pointer:coarse) { .rich-tool-button { min-width:36px; min-height:36px; } .source-editor, .source-syntax { font-size:16px; line-height:24px; } .source-line-numbers { line-height:24px; } }

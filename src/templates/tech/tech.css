@@ -1,0 +1,13 @@
+/* 科技：技术侧栏保留深色，姓名和摘要回到通栏白底。 */
+.resume.tech { --default-sidebar-width: 30%; --sidebar-background: #172438; }
+.resume.tech h1 { font-size: var(--fs-h1, 2.05em); color: #172438; font-weight: 700; }
+.resume.tech .resume-column-header { border-bottom: 2px solid var(--accent-line); }
+.resume.tech .md-side { background: var(--sidebar-background); color: #e2e8f0; --accent: var(--accent-on-dark); --accent-text: var(--accent-on-dark); --subtitle-color: #cbd5e1; --summary-color: #d1dbe7; --role-color: #f1f5f9; --contact-color: #d1dbe7; }
+.resume.tech h2 { font-size: var(--fs-h2, 1.13em); color: var(--accent-text); border-left: 3px solid var(--accent-line); padding-left: 9px; margin: var(--section-gap, 20px) 0 7px; font-weight: 700; }
+.resume.tech .md-side h2 { color: var(--accent-text); font-size: var(--fs-h2, 1.05em); border-left: none; border-bottom: 1px solid #445166; padding: 0 0 5px; }
+.resume.tech h3 { font-size: var(--fs-h3, 1.04em); margin: 0 0 2px; color: #26364b; font-weight: 700; }
+.resume.tech .md-side :is(h1, h3) { color: #f1f5f9; }
+.resume.tech .md-side :is(p, li) { font-size: .96em; color: #d1dbe7; }
+.resume.tech .md-side code { color: inherit; background: #ffffff18; }
+.resume.tech .item-right { color: #5a6878; font-size: .9em; }
+.resume.tech .md-side .item-right { color: #cbd5e1; }

@@ -1,0 +1,10 @@
+/* 极简深色：增加身份与章节层级，纸面和导出使用相同配色。 */
+.resume.dark { min-height: 297mm; background: #1c2027; color: #e1e5eb; padding: calc(var(--pad, 40) * .8px) 56px calc(var(--pad, 40) * 1px); --subtitle-color: #c4ccd8; --summary-color: #c4ccd8; --role-color: #e1e5eb; --contact-color: #bcc5d2; }
+.resume.dark h1 { font-size: var(--fs-h1, 2.1em); font-weight: 600; letter-spacing: .5px; color: #fff; }
+.resume.dark h2 { font-size: var(--fs-h2, 1.14em); letter-spacing: .5px; color: var(--accent-text); margin: var(--section-gap, 24px) 0 7px; font-weight: 700; border-bottom: 1px solid #414955; padding-bottom: 5px; }
+.resume.dark h3 { font-size: var(--fs-h3, 1.05em); font-weight: 700; margin: 0 0 2px; color: #f1f4f8; }
+.resume.dark li::marker { color: var(--accent-text); }
+.resume.dark .item-right { color: #bcc5d2; font-size: .9em; }
+.resume.dark .resume-portrait { border: 3px solid #485363; }
+.resume.dark .resume-subproject { border-color: #485363; }
+.resume.dark code { background: #343b46; color: #f1f4f8; }

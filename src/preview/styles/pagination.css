@@ -1,0 +1,10 @@
+.resume-measure { position: fixed; left: -10000px; top: 0; width: 210mm; visibility: hidden; pointer-events: none; }
+.resume-measure .resume { width: 210mm; aspect-ratio: auto; min-height: 0; }
+.resume-pages-frame { display: block; width: 210mm; border: 0; background: transparent; }
+.pagination-message { margin: 0 auto 12px; max-width: 210mm; font-size: 12px; color: var(--muted); }
+.pagination-message[role="alert"] { color: var(--danger); }
+#resume-print-root { display: none; }
+@media print {
+  body:has(#resume-print-root) > #root { display: none !important; }
+  #resume-print-root { display: block; }
+}

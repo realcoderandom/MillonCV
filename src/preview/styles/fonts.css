@@ -1,0 +1,41 @@
+/* =========================================================
+   Web 字体引入 —— 全部经 jsDelivr CDN，许可证均允许免费商用
+   - 思源黑体/宋体 (Noto Sans/Serif SC) ：SIL OFL，Google + Adobe
+   - 霞鹜文楷 (LXGW WenKai)              ：SIL OFL，lxgw
+   - 阿里巴巴普惠体 3.0 (AlibabaPuHuiTi)  ：阿里免费商用授权
+   - Inter / Lora / Source Sans 3 / EB Garamond ：SIL OFL
+   中文字体按 unicode-range 分片，浏览器仅下载页面用到的字形子集。
+   离线/CDN 不可用时，由 FONT_OPTIONS 中的系统字体回退链兜底。
+   ========================================================= */
+
+/* —— 中文衬线/无衬线：思源系列（简体子集）—— */
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc/chinese-simplified-400.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc/chinese-simplified-700.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc/chinese-simplified-400.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc/chinese-simplified-700.css');
+
+/* —— 霞鹜文楷（regular + bold，已分片）—— */
+@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont/lxgwwenkai-regular.css');
+@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont/lxgwwenkai-bold.css');
+
+/* —— 阿里巴巴普惠体 3.0（35 Thin / 55 Regular / 85 Bold）—— */
+@import url('https://cdn.jsdelivr.net/npm/c1-alibaba-puhui-ti/index.css');
+
+/* —— 英文无衬线：Inter（现代几何）—— */
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/inter/latin-400.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/inter/latin-600.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/inter/latin-700.css');
+
+/* —— 英文无衬线：Source Sans 3（人文）—— */
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3/latin-400.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3/latin-600.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3/latin-700.css');
+
+/* —— 英文衬线：Lora（优雅，适合正文）—— */
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/lora/latin-400.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/lora/latin-600.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/lora/latin-700.css');
+
+/* —— 英文衬线：EB Garamond（古典印刷感）—— */
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/eb-garamond/latin-400.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/eb-garamond/latin-600.css');
