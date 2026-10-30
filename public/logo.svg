@@ -1,3 +1,11 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M4 26V6L16 20L28 6V26" stroke="#34558F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <title>MillonCV</title>
+  <style>
+    :root { color: #0f1115; }
+    @media (prefers-color-scheme: dark) { :root { color: #f9fafb; } }
+  </style>
+  <defs>
+    <path id="milloncv-mark" d="M4 26V6L16 20L28 6V26" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </defs>
+  <use href="#milloncv-mark"/>
 </svg>

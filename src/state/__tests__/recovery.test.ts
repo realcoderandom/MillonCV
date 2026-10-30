@@ -5,6 +5,7 @@ import { parseMarkdownWithDiagnostics } from '@/resume/markdown/parse'
 import { resolveResumeTheme } from '@/templates/theme'
 import { getTemplate, LEGACY_TEMPLATES } from '@/templates/registry'
 import { getResumeHydrationState } from '../storage/resumeHydration'
+import { RESUME_STORAGE_VERSION } from '../resumeMigrations'
 import type { Resume } from '@/resume/model'
 
 let useResumeStore: typeof import('../useResumeStore').useResumeStore
@@ -68,6 +69,45 @@ describe('简历恢复机制', () => {
     expect(useResumeStore.getState().resumes[0].sections).toEqual(resume.sections)
   })
 
+  it.each([undefined, 0, 1, 10])('v%s 的旧技能分组在正文和所有历史容器中恢复为 Markdown，保存后仍可读取', async (version) => {
+    const original = structuredClone(useResumeStore.getState().resumes[0])
+    const resume = { ...original, sections: original.sections.map((section) => section.type === 'skills'
+      ? { ...section, data: { groups: [
+        { id: 'languages', category: '语言', items: ['TypeScript', 'Go'] },
+        { id: 'frameworks', category: '框架', items: ['React', 'Vue'] },
+        { id: 'other', category: '', items: ['无分组技能'] },
+      ] } }
+      : section) }
+    const snapshot = { id: 'legacy-skills', createdAt: Date.now(), resume }
+    localStorage.setItem('resume-maker:store', JSON.stringify({ version, state: {
+      resumes: [resume], currentId: resume.id,
+      snapshots: { [resume.id]: [snapshot] },
+      lastDeleted: { resume, snapshots: [snapshot], index: 0, deletedAt: Date.now() },
+      parseNotice: { id: 'notice', resumeId: resume.id, diagnostics: [], previousSections: resume.sections },
+    } }))
+
+    await useResumeStore.persist.rehydrate()
+    expect(getResumeHydrationState().status).toBe('ready')
+    const loaded = useResumeStore.getState()
+    const expectedSkills = { ...original.sections[2], data: { content: '**语言**\n- TypeScript\n- Go\n\n**框架**\n- React\n- Vue\n\n- 无分组技能' } }
+    for (const sections of [
+      loaded.resumes[0].sections, loaded.snapshots[resume.id][0].resume.sections,
+      loaded.lastDeleted!.resume.sections, loaded.lastDeleted!.snapshots[0].resume.sections,
+      loaded.parseNotice!.previousSections,
+    ]) {
+      expect(sections[2]).toEqual(expectedSkills)
+      expect(sections.filter((section) => section.type !== 'skills')).toEqual(original.sections.filter((section) => section.type !== 'skills'))
+    }
+    expect(loaded.resumes[0].id).toBe(original.id)
+    expect(loaded.resumes[0].theme).toEqual(original.theme)
+
+    flushResumeStorage()
+    expect(JSON.parse(localStorage.getItem('resume-maker:store')!).version).toBe(RESUME_STORAGE_VERSION)
+    await useResumeStore.persist.rehydrate()
+    expect(getResumeHydrationState().status).toBe('ready')
+    expect(useResumeStore.getState().resumes[0].sections[2]).toEqual(expectedSkills)
+  })
+
   it('编辑前生成快照，并可恢复到该版本', () => {
     const original = structuredClone(useResumeStore.getState().resumes[0].sections)
     const changed = structuredClone(original)
@@ -88,7 +128,7 @@ describe('简历恢复机制', () => {
       : kind === 'snapshots' ? JSON.stringify({ version: 10, state: { resumes: [resume], snapshots: { [resume.id]: null } } })
       : kind === 'sections' ? JSON.stringify({ version: 10, state: { resumes: [{ ...resume, sections: null }] } })
       : kind === 'theme' ? JSON.stringify({ version: 10, state: { resumes: [{ ...resume, theme: { ...resume.theme, primaryColor: null } }] } })
-      : kind === 'version' ? JSON.stringify({ version: 11, state: { resumes: [resume] } })
+      : kind === 'version' ? JSON.stringify({ version: RESUME_STORAGE_VERSION + 1, state: { resumes: [resume] } })
       : kind === 'null' ? 'null' : kind === 'array' ? '[]' : '{}'
     localStorage.setItem('resume-maker:store', raw)
     await useResumeStore.persist.rehydrate()

@@ -1,8 +1,8 @@
-import { SECTION_TYPE_LABELS, type DatedItem, type Section } from '@/resume/model'
+import { SECTION_TYPE_LABELS, type DatedItem, type Section, type SkillGroup, type SkillsData } from '@/resume/model'
 import { isItemSection } from '@/resume/sections'
 import type { StoredResume, StoredResumeSnapshot, StoredResumeState } from './types'
 
-export const RESUME_STORAGE_VERSION = 10
+export const RESUME_STORAGE_VERSION = 11
 
 type LegacyItem = DatedItem & {
   start?: string
@@ -67,6 +67,19 @@ const MIGRATIONS: readonly { version: number; update: (section: Section) => Sect
     update: (section) => section.type === 'projects' && section.title === '项目经历'
       ? { ...section, title: SECTION_TYPE_LABELS.projects }
       : section,
+  },
+  {
+    version: 11,
+    update: (section) => {
+      if (section.type !== 'skills' || typeof section.data.content === 'string') return section
+      const { groups, ...data } = section.data as Partial<SkillsData> & { groups?: SkillGroup[] }
+      if (!Array.isArray(groups)) return section
+      const content = groups.map(({ category, items }) => [
+        category ? `**${category}**` : '',
+        ...items.map((item) => `- ${item.replace(/\n/g, '\n  ')}`),
+      ].filter(Boolean).join('\n')).filter(Boolean).join('\n\n')
+      return { ...section, data: { ...data, content } }
+    },
   },
 ]
 

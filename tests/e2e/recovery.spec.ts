@@ -48,6 +48,34 @@ test('数据修复后可以重试读取，并重新保存正文', async ({ page 
   await expect(name).toHaveValue('恢复后继续编辑')
 })
 
+test('旧技能分组自动恢复正文和历史快照，继续编辑与刷新不会丢失技能', async ({ page }) => {
+  const state = storedFixture()
+  const skills = { id: 'skills', type: 'skills', title: '技能', data: { groups: [
+    { id: 'languages', category: '语言', items: ['TypeScript', 'Go'] },
+    { id: 'frameworks', category: '框架', items: ['React'] },
+  ] } }
+  const resume = { ...state.resumes[0], sections: [...state.resumes[0].sections.slice(0, 2), skills] }
+  const history = { ...state.snapshots[resume.id][0], resume }
+  await seedStorage(page, JSON.stringify({ version: 10, state: {
+    ...state, resumes: [resume], snapshots: { [resume.id]: [history] },
+  } }))
+  await openResume(page)
+  await expect(page.getByRole('heading', { name: '无法读取本地简历' })).toHaveCount(0)
+  await expect(page.locator('#resume-print-root')).toContainText('TypeScript')
+
+  const content = '**语言**\n- TypeScript\n- Go\n\n**框架**\n- React'
+  await expect.poll(async () => (await readStoredState(page)).resumes[0].sections[2]).toEqual({
+    id: 'skills', type: 'skills', title: '技能', data: { content },
+  })
+  expect((await readStoredState(page)).snapshots[resume.id][0].resume.sections[2]).toMatchObject({ data: { content } })
+  await page.getByRole('textbox', { name: '姓名', exact: true }).fill('技能迁移后继续编辑')
+  await expect.poll(async () => (await readStoredState(page)).resumes[0].sections[0]).toMatchObject({ data: { name: '技能迁移后继续编辑' } })
+  await page.reload()
+  await expect(page.getByRole('textbox', { name: '姓名', exact: true })).toHaveValue('技能迁移后继续编辑')
+  await switchMode(page, 'Markdown')
+  await expect(page.getByRole('textbox', { name: 'Markdown 简历源码' })).toHaveValue(new RegExp(content.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
+})
+
 for (const mode of ['Markdown', '文档编辑'] as const) {
   test(`${mode} 在防抖提交前恢复快照，旧草稿不能覆盖恢复结果`, async ({ page }) => {
     await page.clock.install()

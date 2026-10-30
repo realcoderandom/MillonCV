@@ -26,7 +26,15 @@ function item(value: unknown, path: string) {
   if (value.projects != null) list(value.projects, `${path}.projects`, item)
 }
 
-function section(value: unknown, path: string) {
+function skillGroup(value: unknown, path: string) {
+  record(value, path)
+  strings(value, ['category'], path)
+  list(value.items, `${path}.items`, (item, itemPath) => {
+    if (typeof item !== 'string') invalid(itemPath)
+  })
+}
+
+function section(value: unknown, path: string, allowLegacySkills: boolean) {
   record(value, path)
   strings(value, ['id', 'type', 'title'], path)
   const data = value.data
@@ -43,7 +51,12 @@ function section(value: unknown, path: string) {
       list(data.items, `${path}.data.items`, item)
       break
     case 'skills':
-      strings(data, ['content'], `${path}.data`)
+      // v10 及更早的技能仍可能保存为分组；先验证旧结构，再由 v11 迁移为正文。
+      if (allowLegacySkills && data.content == null && Array.isArray(data.groups)) {
+        list(data.groups, `${path}.data.groups`, skillGroup)
+      } else {
+        strings(data, ['content'], `${path}.data`)
+      }
       break
     case 'custom':
       strings(data, ['title', 'content'], `${path}.data`)
@@ -53,10 +66,10 @@ function section(value: unknown, path: string) {
   }
 }
 
-function resume(value: unknown, path: string) {
+function resume(value: unknown, path: string, allowLegacySkills: boolean) {
   record(value, path)
   strings(value, ['id', 'name', 'template'], path)
-  list(value.sections, `${path}.sections`, section)
+  list(value.sections, `${path}.sections`, (value, path) => section(value, path, allowLegacySkills))
   if (value.updatedAt != null && typeof value.updatedAt !== 'number') invalid(`${path}.updatedAt`)
   if (value.theme != null) {
     record(value.theme, `${path}.theme`)
@@ -71,35 +84,39 @@ function resume(value: unknown, path: string) {
   }
 }
 
-function snapshot(value: unknown, path: string) {
+function snapshot(value: unknown, path: string, allowLegacySkills: boolean) {
   record(value, path)
   strings(value, ['id'], path)
   if (typeof value.createdAt !== 'number') invalid(`${path}.createdAt`)
-  resume(value.resume, `${path}.resume`)
+  resume(value.resume, `${path}.resume`, allowLegacySkills)
 }
 
 export function validateResumeStorage(value: unknown, currentVersion: number) {
   record(value, 'storage')
-  if (value.version != null && (typeof value.version !== 'number' || !Number.isInteger(value.version)
-    || value.version < 0 || value.version > currentVersion)) invalid('storage.version')
+  const version = value.version ?? 0
+  if (typeof version !== 'number' || !Number.isInteger(version)
+    || version < 0 || version > currentVersion) invalid('storage.version')
+  const allowLegacySkills = version < 11
+  const validateResume = (value: unknown, path: string) => resume(value, path, allowLegacySkills)
+  const validateSnapshot = (value: unknown, path: string) => snapshot(value, path, allowLegacySkills)
   const state = value.state
   record(state, 'state')
-  list(state.resumes, 'resumes', resume)
+  list(state.resumes, 'resumes', validateResume)
   if (state.currentId != null && typeof state.currentId !== 'string') invalid('currentId')
   if (state.snapshots != null) {
     record(state.snapshots, 'snapshots')
-    Object.entries(state.snapshots).forEach(([id, snapshots]) => list(snapshots, `snapshots.${id}`, snapshot))
+    Object.entries(state.snapshots).forEach(([id, snapshots]) => list(snapshots, `snapshots.${id}`, validateSnapshot))
   }
   if (state.lastDeleted != null) {
     record(state.lastDeleted, 'lastDeleted')
-    resume(state.lastDeleted.resume, 'lastDeleted.resume')
-    if (state.lastDeleted.snapshots != null) list(state.lastDeleted.snapshots, 'lastDeleted.snapshots', snapshot)
+    validateResume(state.lastDeleted.resume, 'lastDeleted.resume')
+    if (state.lastDeleted.snapshots != null) list(state.lastDeleted.snapshots, 'lastDeleted.snapshots', validateSnapshot)
     for (const key of ['index', 'deletedAt']) if (typeof state.lastDeleted[key] !== 'number') invalid(`lastDeleted.${key}`)
   }
   if (state.parseNotice != null) {
     record(state.parseNotice, 'parseNotice')
     strings(state.parseNotice, ['id', 'resumeId'], 'parseNotice')
-    list(state.parseNotice.previousSections, 'parseNotice.previousSections', section)
+    list(state.parseNotice.previousSections, 'parseNotice.previousSections', (value, path) => section(value, path, allowLegacySkills))
     list(state.parseNotice.diagnostics, 'parseNotice.diagnostics', (diagnostic, path) => {
       record(diagnostic, path)
       strings(diagnostic, ['kind', 'title', 'toType'], path)
@@ -119,7 +136,9 @@ export function createResumeJSONStorage<S>(
     if (raw === null) return null
     const value: unknown = JSON.parse(raw)
     validateResumeStorage(value, currentVersion)
-    return value as StorageValue<S>
+    const stored = value as StorageValue<S>
+    // Zustand 会跳过无版本号的数据迁移，按最早版本补齐后再进入统一迁移链。
+    return { ...stored, version: stored.version ?? 0 }
   }
   return {
     getItem: (name) => {

@@ -1,4 +1,4 @@
-// MillonCV 品牌标识：连续折线构成几何 M，使用 currentColor 适配明暗主题。
+// 与标签页共用 public/logo.svg 中的 M 图形，颜色继承当前界面主题。
 export function Logo({ className = '', size = 20 }: { className?: string; size?: number }) {
   return (
     <svg
@@ -9,13 +9,7 @@ export function Logo({ className = '', size = 20 }: { className?: string; size?:
       className={className}
       aria-hidden="true"
     >
-      <path
-        d="M4 26V6L16 20L28 6V26"
-        stroke="currentColor"
-        strokeWidth="3.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <use href={`${import.meta.env.BASE_URL}logo.svg#milloncv-mark`} />
     </svg>
   )
 }

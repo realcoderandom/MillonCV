@@ -75,11 +75,11 @@ src/
 
 - Zustand 持久化键固定为 `resume-maker:store`。迁移同时遍历正文、快照、删除记录及解析撤销的 `previousSections`，读取规范化共用于主文档、历史、删除记录与导入。不得因品牌或界面调整重置数据；字段缺省保留旧行为。
 - `resumeMigrations.ts` 的版本常量与迁移列表维护一次性字段转换，公共遍历负责所有历史容器；新增版本不要只修改主文档。`resumeNormalization.ts` 负责每次读取的模板、主题与布局规范化，以及持久字段的白名单合并，不覆盖 Store 操作函数。
-- 保留旧 `start/end` → `rightText`、项目 `techStack/summary` → `description` 的迁移。旧默认标题「项目经历」一次性改为「项目经验」，自定义标题不变。
+- 保留旧 `start/end` → `rightText`、项目 `techStack/summary` → `description` 的迁移。旧默认标题「项目经历」一次性改为「项目经验」，自定义标题不变。v11 将旧技能 `groups` 转为 Markdown `content`，保留分类和全部技能；已有字符串正文（包括空字符串）优先，不以旧分组覆盖。
 - 普通修改的快照按 30 秒间隔限频，每份简历最多 10 份；恢复前先保存当前内容。界面提供 8 秒删除撤销，局部恢复不覆盖期间其他字段的修改。
 - 存储与编辑解析独立防抖：存储队列保留最新原始状态，500ms 停顿后才编码并写入；页面离开仍同步 flush。编码或写入失败保留待写状态，显示失败并支持重试；快照仍在同一浏览器存储中，不能代替外部备份。
 - Store 必须不可变更新；[stateSerialization.ts](../src/state/storage/stateSerialization.ts) 按顶层字段引用缓存最近一次 JSON。偏好更新复用未变的正文 / 历史片段，保存格式仍为同一键的 `{ state, version }`。新增 Store 持久化字段时，同时维护状态契约、`partialize`、读取校验与合并白名单。
-- 读取时先校验存储封装、正文和历史结构，再迁移合并；未来版本、JSON 解析或格式异常进入恢复界面。失败会清除排队写入并锁定存储，原始 JSON 可下载，重试读取成功后才解除保护。入口为 [resumeStorageSchema.ts](../src/state/storage/resumeStorageSchema.ts) 与 [resumeHydration.ts](../src/state/storage/resumeHydration.ts)。
+- 读取时先校验存储封装、正文和历史结构，再迁移合并；无版本号按 v0 进入迁移链。v10 及更早允许缺少或为 null 的技能正文搭配有效的旧 `groups`，分组分类和技能条目仍须为字符串；未知正文类型不会强转或清空。未来版本、JSON 解析或格式异常进入恢复界面。失败会清除排队写入并锁定存储，原始 JSON 可下载，重试读取成功后才解除保护。入口为 [resumeStorageSchema.ts](../src/state/storage/resumeStorageSchema.ts) 与 [resumeHydration.ts](../src/state/storage/resumeHydration.ts)。
 - 首次空状态在读取成功后由 App 注入示例，防止 StrictMode 重复初始化；读取失败不创建示例。编辑模式属于工作区状态，编辑器实例按简历 id 隔离。
 
 <a id="editing"></a>

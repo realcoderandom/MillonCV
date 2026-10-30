@@ -56,4 +56,18 @@ describe('存储版本与读取规范化', () => {
     expect(normalizeStoredResume({ ...raw, template: 'asu' }).template).toBe('technicalCompact')
     expect(raw.template).toBe('future-template')
   })
+
+  it.each([
+    { data: { groups: [] }, content: '' },
+    { data: { content: null, groups: [{ id: 'tools', category: '工具', items: ['Git\n熟练使用'] }] }, content: '**工具**\n- Git\n  熟练使用' },
+    { data: { content: '', groups: [{ id: 'old', category: '旧技能', items: ['已删除'] }] }, content: '' },
+    { data: { content: '已编辑的 Markdown', groups: [{ id: 'old', category: '旧技能', items: ['旧内容'] }] }, content: '已编辑的 Markdown' },
+  ])('旧技能迁移保留空分组、多行内容及已保存的正文：$content', ({ data, content }) => {
+    const stored = { resumes: [{ ...createSampleResume(), sections: [{ id: 'skills', type: 'skills', title: '专业能力', data }] }] }
+    const before = structuredClone(stored)
+    const migrated = migrateResumeState(stored, 10)
+    expect(migrated.resumes![0].sections[0]).toMatchObject({ id: 'skills', type: 'skills', title: '专业能力', data: { content } })
+    expect(stored).toEqual(before)
+    expect(migrateResumeState(migrated, RESUME_STORAGE_VERSION)).toBe(migrated)
+  })
 })

@@ -1,6 +1,7 @@
 import { test as base, expect, type Page } from '@playwright/test'
 import type { Resume } from '@/resume/model'
 import type { ResumeSnapshot } from '@/state/useResumeStore'
+import { RESUME_STORAGE_VERSION } from '@/state/resumeMigrations'
 
 export const STORAGE_KEY = 'resume-maker:store'
 
@@ -31,7 +32,7 @@ export function storedFixture(resume = resumeFixture()): StoredState {
 }
 
 export function storedJson(state = storedFixture()): string {
-  return JSON.stringify({ version: 10, state })
+  return JSON.stringify({ version: RESUME_STORAGE_VERSION, state })
 }
 
 export async function seedStorage(page: Page, raw = storedJson()) {
