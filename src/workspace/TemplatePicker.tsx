@@ -34,7 +34,7 @@ const THUMBNAIL_SECTIONS: Section[] = [
         website: '',
         github: 'github.com/zhangsan',
       },
-      summary: '五年前端开发经验，专注大型 Web 应用架构与性能优化。',
+      summary: '七年前端开发经验，专注大型 Web 应用架构与性能优化。',
     },
   },
   {

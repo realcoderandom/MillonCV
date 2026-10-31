@@ -2,6 +2,8 @@
 
 [简体中文](README.md) | English
 
+**[Try it online →](https://realcoderandom.github.io/MillonCV/)**
+
 **A clear, professional resume for your next step toward a higher salary.**
 
 MillonCV is a resume editor and layout tool that runs in your browser. Organize your experience with module forms, edit it as a document or Markdown, see live A4 pagination, and save a PDF through your browser's print dialog.
@@ -40,7 +42,7 @@ npm ci
 npm run dev
 ```
 
-Open the local URL printed in your terminal. The default is `http://localhost:5173`; if that port is occupied, use the URL Vite reports. The first visit loads a sample resume, which you can edit or replace with a new one.
+Open the local URL printed in your terminal. The default is `http://localhost:5173`; if that port is occupied, use the URL Vite reports. The first visit loads a fictional sample resume with work experience, subprojects, skills, and education, which you can edit or replace with a new one.
 
 To preview a production build:
 

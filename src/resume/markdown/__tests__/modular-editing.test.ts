@@ -8,8 +8,16 @@ import type { Section, SectionType } from '../../model'
 
 describe('模块编辑的 Markdown 往返', () => {
   it('自定义所有模块标题后，类型、id、正文及层级独立导入仍保持一致', () => {
-    const sections = createSampleResume().sections.map((section, index) => {
-      const title = ['我的名片', '成长足迹', '工具箱', '代表作品', '学习之路', '项目经历'][index]
+    const titles: Record<SectionType, string> = {
+      basics: '我的名片',
+      experience: '成长足迹',
+      skills: '工具箱',
+      projects: '代表作品',
+      education: '学习之路',
+      custom: '项目经历',
+    }
+    const sections = createSampleResume().sections.map((section) => {
+      const title = titles[section.type]
       return section.type === 'custom' ? { ...section, title, data: { ...section.data, title } } : { ...section, title }
     })
     expect(parseMarkdownToSections(serializeSections(sections))).toEqual(sections)
