@@ -25,7 +25,7 @@
 
 [开发模式回归](../tests/e2e/development.spec.ts) 额外使用项目的真实 Vite 配置启动开发服务，检查独立空缓存的冷启动、保留缓存后重启、分页资源加载、编辑更新、懒加载编辑器和刷新，并断言没有 Vite / 页面异常或本地 HTTP 错误。服务端口为 `4174 + Playwright parallelIndex`，端口占用直接报错；结束后关闭服务并删除临时缓存，不复用用户开发服务或依赖缓存。
 
-[CI](../.github/workflows/deploy.yml) 使用 Ubuntu、Node 20 与 npm，PR 与 main 推送均执行 `npm ci` 安装、依赖审计、test、lint 和 E2E；依赖审计中的 high / critical 告警会阻断流水线。E2E 启动前构建包含源码与测试的类型检查。检查通过后 main 才部署，PR 不部署。浏览器报告和失败 trace / 截图保留 7 天。
+[CI](../.github/workflows/deploy.yml) 使用 Ubuntu 24.04、Node 24 与 npm，PR 与 main 推送均执行 `npm ci` 安装、依赖审计、类型检查、test、lint 和 E2E；依赖审计中的 high / critical 告警会阻断流水线。E2E 启动前构建包含源码与测试的类型检查。检查通过后 main 才部署，PR 不部署。浏览器报告和失败 trace / 截图保留 7 天。
 
 首次运行 E2E 前安装 Chromium：
 
@@ -49,7 +49,7 @@ Linux CI 使用 `npx playwright install --with-deps chromium`。测试启动自�
 | 保存与恢复 | 输入后立即切模式、切简历、新建、复制、导出或刷新不丢末次输入且不串写；失败重试、快照与删除撤销可用；旧版字段同时覆盖主文档与所有历史容器 |
 | 模板与布局 | 新旧模板可渲染、切换与打印，主题作用域不互相覆盖，排序和分栏无遗漏，刷新与重置正确 |
 | 工作区 | 深浅主题、宽屏、最窄编辑区和手机可用；拖拽、方向键、Esc、跨页定位及焦点恢复符合约定 |
-| 依赖与锁文件 | 执行 `npm run audit:deps`、单元测试、lint 和完整 E2E（包含类型检查与构建），确认升级未破坏编辑、恢复和分页 |
+| 依赖与锁文件 | 在独立目录按 CI 的 Node / npm 版本执行 `npm ci`，再运行依赖审计、单元测试、lint 和完整 E2E（包含类型检查与构建）；避免由上级目录的 `node_modules` 隐式补齐缺失依赖 |
 | 分包与导入 | `@/` 在 TypeScript、开发、测试和生产构建中解析一致；懒加载编辑器及分页资源可用；包边界 lint 与规则回归通过 |
 | 分页与 PDF | 执行下节实际文件检查，不能用纯逻辑测试代替 |
 
