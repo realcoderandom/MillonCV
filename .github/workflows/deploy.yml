@@ -64,5 +64,18 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Verify Pages publishing source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pages_source="$(gh api "repos/${GITHUB_REPOSITORY}/pages" --jq '.build_type')" || {
+            echo "::error::Unable to read Pages settings. Enable Pages and select GitHub Actions as the publishing source."
+            exit 1
+          }
+          if [ "$pages_source" != "workflow" ]; then
+            echo "::error::Set Settings > Pages > Build and deployment > Source to GitHub Actions before deploying."
+            exit 1
+          fi
+
       - id: deployment
         uses: actions/deploy-pages@v5.0.1

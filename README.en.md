@@ -62,6 +62,8 @@ The repository includes a [Pages workflow](.github/workflows/deploy.yml). Before
 
 If an existing run fails at `deploy-pages` with `404 / Ensure GitHub Pages has been enabled`, complete the setup above, then select **Re-run failed jobs** on that run.
 
+The deployment job first verifies that Pages uses GitHub Actions. If the site is blank and requests `/src/main.tsx`, a branch / Jekyll deployment has published the source files. Confirm the source setting, wait for any older `pages build and deployment` run to finish, then rerun the `deploy` job in this project's workflow to publish the `dist/` build.
+
 [GitHub Pages plan requirements](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site): GitHub Free supports public repositories; private repositories require a paid plan that supports Pages.
 
 <a id="usage"></a>

@@ -60,6 +60,8 @@ npm run preview
 
 若已有运行在 `deploy-pages` 步骤报 `404 / Ensure GitHub Pages has been enabled`，先完成上述配置，再在该运行页面选择 **Re-run failed jobs**。
 
+部署任务会先核对 Pages 发布源是否为 GitHub Actions。若站点空白并尝试加载 `/src/main.tsx`，说明分支 / Jekyll 发布了源码。确认发布源配置，等待旧的 `pages build and deployment` 运行结束，再重跑本项目工作流中的 `deploy` 任务，发布 `dist/` 构建产物。
+
 [GitHub Pages 的套餐要求](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)：GitHub Free 支持公开仓库；私有仓库需要支持 Pages 的付费套餐。
 
 <a id="usage"></a>
