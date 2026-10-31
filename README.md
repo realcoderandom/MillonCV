@@ -49,6 +49,19 @@ npm run preview
 
 应用是纯前端项目，构建产物位于 `dist/`，可托管在静态站点服务中。
 
+<a id="deployment"></a>
+
+### 发布到 GitHub Pages
+
+仓库已包含 [Pages 工作流](.github/workflows/deploy.yml)，首次发布前需要管理员完成站点配置：
+
+1. 打开仓库的 **Settings → Pages**，在 **Build and deployment → Source** 中选择 **GitHub Actions**。已有工作流，无需另外创建模板工作流。
+2. 推送到 `main`，或在 Actions 中手动运行 **Deploy to GitHub Pages**。检查通过后才会发布 `dist/`；Pull Request 只运行检查。
+
+若已有运行在 `deploy-pages` 步骤报 `404 / Ensure GitHub Pages has been enabled`，先完成上述配置，再在该运行页面选择 **Re-run failed jobs**。
+
+[GitHub Pages 的套餐要求](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)：GitHub Free 支持公开仓库；私有仓库需要支持 Pages 的付费套餐。
+
 <a id="usage"></a>
 
 ## 使用指南

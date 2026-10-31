@@ -27,6 +27,8 @@
 
 [CI](../.github/workflows/deploy.yml) 使用 Ubuntu 24.04、Node 24 与 npm，PR 与 main 推送均执行 `npm ci` 安装、依赖审计、类型检查、test、lint 和 E2E；依赖审计中的 high / critical 告警会阻断流水线。E2E 启动前构建包含源码与测试的类型检查。检查通过后 main 才部署，PR 不部署。浏览器报告和失败 trace / 截图保留 7 天。
 
+首次部署前，按 [README 的 Pages 配置](../README.md#deployment) 启用站点并选择 GitHub Actions。构建检查与部署结果分别记录；只有远端 Pages 发布成功后，才记录为部署通过。
+
 首次运行 E2E 前安装 Chromium：
 
 ```bash

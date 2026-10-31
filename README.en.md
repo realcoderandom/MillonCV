@@ -51,6 +51,19 @@ npm run preview
 
 The app runs entirely in the browser. Build output is written to `dist/` and can be hosted by a static site service.
 
+<a id="deployment"></a>
+
+### Publish to GitHub Pages
+
+The repository includes a [Pages workflow](.github/workflows/deploy.yml). Before the first deployment, a repository administrator must configure the site:
+
+1. Open **Settings → Pages** and select **GitHub Actions** under **Build and deployment → Source**. The workflow already exists, so no additional template workflow is needed.
+2. Push to `main`, or manually run **Deploy to GitHub Pages** in Actions. The workflow publishes `dist/` after checks pass; pull requests only run checks.
+
+If an existing run fails at `deploy-pages` with `404 / Ensure GitHub Pages has been enabled`, complete the setup above, then select **Re-run failed jobs** on that run.
+
+[GitHub Pages plan requirements](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site): GitHub Free supports public repositories; private repositories require a paid plan that supports Pages.
+
 <a id="usage"></a>
 
 ## Usage
