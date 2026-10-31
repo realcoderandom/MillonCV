@@ -2,14 +2,14 @@
 
 React + TypeScript 简历工具，模块、富文本和 Markdown 源码共享结构化数据；预览用 Paged.js 分页，PDF 通过浏览器打印保存。
 
-只用 **pnpm**。先看工作区差异，保留已有未提交改动。
+只用 **npm**。先看工作区差异，保留已有未提交改动。
 
 ```bash
-pnpm dev      # 默认 http://localhost:5173
-pnpm test
-pnpm test:e2e # 构建产物上的 Chromium 桌面 / 手机回归；首次需安装浏览器
-pnpm lint
-pnpm build    # 含类型检查
+npm run dev      # 默认 http://localhost:5173
+npm test
+npm run test:e2e # 构建产物上的 Chromium 桌面 / 手机回归；首次需安装浏览器
+npm run lint
+npm run build    # 含类型检查
 ```
 
 ## 关键约束

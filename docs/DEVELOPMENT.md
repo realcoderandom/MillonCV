@@ -53,7 +53,7 @@ src/
 
 `@pagedjs-script?url` 为 iframe 提供经典脚本的静态资源 URL。[vite.config.ts](../vite.config.ts) 按完整导入名设置 `optimizeDeps.exclude`，避免 Vite 开发模式的别名预解析把它误送入依赖预构建；仅验证生产构建或单次模块转换不能覆盖此路径，须运行开发模式浏览器回归。
 
-[包边界规则](../scripts/eslint/package-boundaries.mjs) 随 `pnpm lint` 检查静态导入、动态导入、重导出和类型导入；规则回归位于 [tests/architecture](../tests/architecture)。新增跨包协作优先传递契约或在上层组合，调整依赖方向时同步维护规则与本节。单元测试与被测包就近存放，浏览器流程统一放在 `tests/e2e`。
+[包边界规则](../scripts/eslint/package-boundaries.mjs) 随 `npm run lint` 检查静态导入、动态导入、重导出和类型导入；规则回归位于 [tests/architecture](../tests/architecture)。新增跨包协作优先传递契约或在上层组合，调整依赖方向时同步维护规则与本节。单元测试与被测包就近存放，浏览器流程统一放在 `tests/e2e`。
 
 <a id="data-model"></a>
 

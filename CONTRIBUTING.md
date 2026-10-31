@@ -5,13 +5,13 @@
 ## 开发约定
 
 - 先检查差异和调用链，保留已有未提交改动，只改任务范围。已有 `.codegraph/` 索引时先用 CodeGraph，否则用 `rg`，不自行建索引。
-- 只用 pnpm；TypeScript strict，不新增 `any`（保留 marked token 解析处已有例外）。组件用函数与 Hooks，注释用中文，复用工具函数，遵循 KISS / DRY / YAGNI。
+- 只用 npm；TypeScript strict，不新增 `any`（保留 marked token 解析处已有例外）。组件用函数与 Hooks，注释用中文，复用工具函数，遵循 KISS / DRY / YAGNI。
 
 <a id="documentation"></a>
 
 ## 文档随代码维护
 
-- 长期行为、字段、接口、兼容边界和设计理由更新[开发文档](docs/DEVELOPMENT.md)；安装、操作和排障变化更新 [README](README.md)；检查流程与标准变化更新[验证指南](docs/VALIDATION.md)。
+- 长期行为、字段、接口、兼容边界和设计理由更新[开发文档](docs/DEVELOPMENT.md)；安装、操作和排障变化同步更新[中文 README](README.md) 与 [English README](README.en.md)；检查流程与标准变化更新[验证指南](docs/VALIDATION.md)。
 - 概念关系或入口改变时，再更新开发文档的概览和 [AGENTS](AGENTS.md) 导航。每项规则只在一个主要位置维护，其他位置用链接；合并前保留独有的有效信息。
 - 文档与实现冲突时核对代码。无法确认的设计意图标为“待确认”，继续其他工作。计划、当前实现、历史决策分别注明状态与适用范围；保留的历史记录维持原语境，后续变化另作说明。
 - 验证方法与执行结果分开；只有新结果改变能力判断、发现阻塞或提出复验要求时，才更新长期证据摘要。普通测试不额外建报告，历史通过不代表当前通过。

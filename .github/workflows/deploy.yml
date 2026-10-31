@@ -24,24 +24,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
+          cache: npm
 
-      - run: pnpm install --frozen-lockfile
+      - run: npm ci
 
-      - run: pnpm test
+      - run: npm run audit:deps -- --audit-level=high
 
-      - run: pnpm lint
+      - run: npm test
 
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: npm run lint
 
-      - run: pnpm test:e2e
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run test:e2e
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

@@ -1,5 +1,7 @@
 # MillonCV
 
+简体中文 | [English](README.en.md)
+
 **为下一份高薪机会，准备一份清晰、专业的简历。**
 
 MillonCV 是一个在浏览器中运行的简历编辑与排版工具。用模块表单整理经历，也可以切换文档或 Markdown 编辑；一边修改，一边查看 A4 分页效果，最后通过浏览器打印保存为 PDF。
@@ -29,11 +31,11 @@ MillonCV 是一个在浏览器中运行的简历编辑与排版工具。用模�
 
 ## 快速开始
 
-准备 Node.js **20.19+（20.x）、22.13+（22.x）或 24+**，以及 **pnpm 9+**（CI 使用 pnpm 9）。在项目根目录执行：
+准备 Node.js **20.19+（20.x）、22.13+（22.x）或 24+**，使用随 Node.js 安装的 npm。在项目根目录执行：
 
 ```bash
-pnpm install --frozen-lockfile
-pnpm dev
+npm ci
+npm run dev
 ```
 
 打开终端显示的本地地址，默认是 `http://localhost:5173`；端口被占用时以实际输出为准。首次打开会载入示例简历，可以直接修改或新建自己的简历。
@@ -41,8 +43,8 @@ pnpm dev
 预览生产构建：
 
 ```bash
-pnpm build
-pnpm preview
+npm run build
+npm run preview
 ```
 
 应用是纯前端项目，构建产物位于 `dist/`，可托管在静态站点服务中。
@@ -109,7 +111,7 @@ pnpm preview
 
 | 情况 | 处理方法 |
 |---|---|
-| 安装依赖失败 | 确认 Node.js 与 pnpm 版本符合要求，按安装日志检查网络或代理 |
+| 安装依赖失败 | 确认 Node.js 与 npm 版本符合要求，按安装日志检查网络或代理 |
 | 保存失败 | 先重试并导出 Markdown，再检查浏览器存储限制；不要先清理站点数据 |
 | 更新后无法读取简历 | 新版会自动迁移旧技能分组；若仍出现格式异常，先下载原始 JSON 备份再排查，不要清理站点数据 |
 | Markdown 结构识别不符 | 查看解析提示，必要时撤销解析，或回模块模式修改；备份中的结构标识应保留 |
@@ -126,17 +128,18 @@ pnpm preview
 
 | 命令 | 用途 |
 |---|---|
-| `pnpm dev` | 启动开发服务 |
-| `pnpm typecheck` | TypeScript 类型检查 |
-| `pnpm test` | 运行单元与架构测试 |
-| `pnpm lint` | 静态检查 |
-| `pnpm build` | 类型检查并生成生产产物 |
-| `pnpm test:e2e` | 构建后运行 Chromium 桌面与手机回归 |
+| `npm run dev` | 启动开发服务 |
+| `npm run typecheck` | TypeScript 类型检查 |
+| `npm test` | 运行单元与架构测试 |
+| `npm run lint` | 静态检查 |
+| `npm run audit:deps` | 通过 npm 官方接口审计依赖安全 |
+| `npm run build` | 类型检查并生成生产产物 |
+| `npm run test:e2e` | 构建后运行 Chromium 桌面与手机回归 |
 
-首次运行 E2E 前执行 `pnpm exec playwright install chromium`。检查选择、通过标准和浏览器报告位置见[验证指南](docs/VALIDATION.md)；提交或交付时写清改动原因、相关文档、实际验证与未覆盖项。
+首次运行 E2E 前执行 `npx playwright install chromium`。检查选择、通过标准和浏览器报告位置见[验证指南](docs/VALIDATION.md)；提交或交付时写清改动原因、相关文档、实际验证与未覆盖项。
 
 [Agent 入口](AGENTS.md) · [贡献指南](CONTRIBUTING.md) · [架构与工程约定](docs/DEVELOPMENT.md) · [验证指南](docs/VALIDATION.md)
 
 ## 授权说明
 
-私有项目，未开源。
+本项目采用 [MIT License](LICENSE) 授权。第三方依赖与字体遵循各自的许可证。

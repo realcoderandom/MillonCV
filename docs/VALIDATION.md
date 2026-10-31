@@ -10,37 +10,38 @@
 
 | 命令 | 用途与结论范围 |
 |---|---|
-| `pnpm dev` | 启动开发服务，地址以终端为准；不代表流程通过 |
-| `pnpm typecheck` | TypeScript 类型检查 |
-| `pnpm test` | Vitest 单次测试，全部用例通过；只证明已有断言 |
-| `pnpm test:watch` | 本地监听调试，交付前仍记录单次结果 |
-| `pnpm test:e2e` | 自动构建并在 Chromium 桌面和 390px 手机视口运行真实浏览器回归，含 Vite 开发模式检查 |
-| `pnpm test:e2e:ui` | 打开 Playwright 交互调试界面 |
-| `pnpm lint` | 源码静态检查，警告不自动使脚本失败 |
-| `pnpm build` | 含类型检查，生成 `dist/`；不证明交互和 PDF 正确 |
-| `pnpm preview` | 构建后预览产物，再检查实际操作 |
+| `npm run dev` | 启动开发服务，地址以终端为准；不代表流程通过 |
+| `npm run typecheck` | TypeScript 类型检查 |
+| `npm test` | Vitest 单次测试，全部用例通过；只证明已有断言 |
+| `npm run test:watch` | 本地监听调试，交付前仍记录单次结果 |
+| `npm run test:e2e` | 自动构建并在 Chromium 桌面和 390px 手机视口运行真实浏览器回归，含 Vite 开发模式检查 |
+| `npm run test:e2e:ui` | 打开 Playwright 交互调试界面 |
+| `npm run lint` | 源码静态检查，警告不自动使脚本失败 |
+| `npm run audit:deps` | 通过 npm 官方接口检查全部依赖的已知安全公告；退出码为 0 表示本次未报告漏洞，不代表不存在未知问题 |
+| `npm run build` | 含类型检查，生成 `dist/`；不证明交互和 PDF 正确 |
+| `npm run preview` | 构建后预览产物，再检查实际操作 |
 
 [Vitest](../vitest.config.ts) 使用 Node 环境，包含各包的 `src/**/*.test.ts` 和 `tests/architecture/**/*.test.mjs` 包边界规则回归。[Playwright](../playwright.config.ts) 的业务 [E2E 用例](../tests/e2e) 在生产构建上运行，每例使用独立浏览器上下文和存储。外部字体请求被阻断，分页样本指定系统字体，避免测试依赖 CDN。
 
 [开发模式回归](../tests/e2e/development.spec.ts) 额外使用项目的真实 Vite 配置启动开发服务，检查独立空缓存的冷启动、保留缓存后重启、分页资源加载、编辑更新、懒加载编辑器和刷新，并断言没有 Vite / 页面异常或本地 HTTP 错误。服务端口为 `4174 + Playwright parallelIndex`，端口占用直接报错；结束后关闭服务并删除临时缓存，不复用用户开发服务或依赖缓存。
 
-[CI](../.github/workflows/deploy.yml) 使用 Ubuntu、Node 20、pnpm 9，PR 与 main 推送均执行冻结锁文件安装、test、lint 和 E2E；E2E 启动前构建包含源码与测试的类型检查。检查通过后 main 才部署，PR 不部署。浏览器报告和失败 trace / 截图保留 7 天。
+[CI](../.github/workflows/deploy.yml) 使用 Ubuntu、Node 20 与 npm，PR 与 main 推送均执行 `npm ci` 安装、依赖审计、test、lint 和 E2E；依赖审计中的 high / critical 告警会阻断流水线。E2E 启动前构建包含源码与测试的类型检查。检查通过后 main 才部署，PR 不部署。浏览器报告和失败 trace / 截图保留 7 天。
 
 首次运行 E2E 前安装 Chromium：
 
 ```bash
-pnpm exec playwright install chromium
-pnpm test:e2e
-pnpm exec playwright show-report output/playwright/report
+npx playwright install chromium
+npm run test:e2e
+npx playwright show-report output/playwright/report
 ```
 
-Linux CI 使用 `pnpm exec playwright install --with-deps chromium`。测试启动自己的 `127.0.0.1:4173` 预览服务，退出后自动关闭服务、页面与浏览器；端口占用会报错，不复用或关闭其他服务。产物在忽略提交的 `output/playwright/` 中。
+Linux CI 使用 `npx playwright install --with-deps chromium`。测试启动自己的 `127.0.0.1:4173` 预览服务，退出后自动关闭服务、页面与浏览器；端口占用会报错，不复用或关闭其他服务。产物在忽略提交的 `output/playwright/` 中。
 
 <a id="selection"></a>
 
 ## 按改动检查
 
-代码改动运行 `pnpm test`、`pnpm lint`、`pnpm build`，涉及编辑、存储或分页交互时再运行 `pnpm test:e2e`（包含构建，可代替单独 build）。单元测试放在各包的 `__tests__` 中，例如 [Markdown](../src/resume/markdown/__tests__)、[状态恢复](../src/state/__tests__)和[分页](../src/preview/pagination/__tests__)；跨包约束见[架构测试](../tests/architecture)，浏览器流程见 [E2E](../tests/e2e)。
+代码改动运行 `npm test`、`npm run lint`、`npm run build`，涉及编辑、存储或分页交互时再运行 `npm run test:e2e`（包含构建，可代替单独 build）。单元测试放在各包的 `__tests__` 中，例如 [Markdown](../src/resume/markdown/__tests__)、[状态恢复](../src/state/__tests__)和[分页](../src/preview/pagination/__tests__)；跨包约束见[架构测试](../tests/architecture)，浏览器流程见 [E2E](../tests/e2e)。
 
 | 改动 | 通过标准 |
 |---|---|
@@ -48,8 +49,11 @@ Linux CI 使用 `pnpm exec playwright install --with-deps chromium`。测试启�
 | 保存与恢复 | 输入后立即切模式、切简历、新建、复制、导出或刷新不丢末次输入且不串写；失败重试、快照与删除撤销可用；旧版字段同时覆盖主文档与所有历史容器 |
 | 模板与布局 | 新旧模板可渲染、切换与打印，主题作用域不互相覆盖，排序和分栏无遗漏，刷新与重置正确 |
 | 工作区 | 深浅主题、宽屏、最窄编辑区和手机可用；拖拽、方向键、Esc、跨页定位及焦点恢复符合约定 |
+| 依赖与锁文件 | 执行 `npm run audit:deps`、单元测试、lint 和完整 E2E（包含类型检查与构建），确认升级未破坏编辑、恢复和分页 |
 | 分包与导入 | `@/` 在 TypeScript、开发、测试和生产构建中解析一致；懒加载编辑器及分页资源可用；包边界 lint 与规则回归通过 |
 | 分页与 PDF | 执行下节实际文件检查，不能用纯逻辑测试代替 |
+
+依赖审计固定使用 npm 官方 registry，避免镜像缺少审计接口造成误判。ESLint 和 TypeScript ESLint 的检查链当前仍引用 minimatch 10；`package.json` 中的版本范围覆盖将受影响的 minimatch 10 升级到安全修复版本 11。升级检查工具后应复核是否可以移除此覆盖。
 
 <a id="browser"></a>
 
