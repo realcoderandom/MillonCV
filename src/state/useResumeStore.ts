@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import { persist, type StorageValue } from 'zustand/middleware'
-import type { Resume } from '@/resume/model'
+import { DEFAULT_THEME, type Resume } from '@/resume/model'
+import { createSection } from '@/resume/sections'
 import { uid } from '@/shared/lib/id'
-import { createSampleResume } from '@/resume/sample'
 import { createDebouncedStorage } from './storage/debouncedStorage'
 import { setResumeHydrationState } from './storage/resumeHydration'
 import { clearPersistenceError, markPersistenceError } from './storage/persistenceStatus'
@@ -80,22 +80,19 @@ export const useResumeStore = create<ResumeState>()(
       parseNotice: null,
 
       createResume: (name) => {
-        const r = createSampleResume()
-        r.id = uid()
-        r.name = name || '姓名-目标岗位'
-        r.sections = [
-          {
-            id: uid(),
-            type: 'basics',
-            title: '基本信息',
-            data: {
-              name: '姓名',
-              title: '职位',
-              contact: { phone: '', email: '', location: '', website: '', github: '' },
-              summary: '',
-            },
-          },
-        ]
+        const r: Resume = {
+          id: uid(),
+          name: name || '姓名-目标岗位',
+          template: 'classic',
+          theme: { ...DEFAULT_THEME },
+          updatedAt: Date.now(),
+          sections: [
+            createSection('basics'),
+            createSection('experience'),
+            createSection('education'),
+            createSection('skills'),
+          ],
+        }
         set((s) => ({ resumes: [...s.resumes, r], currentId: r.id }))
         return r.id
       },

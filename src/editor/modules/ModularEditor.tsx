@@ -1,20 +1,22 @@
-import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactElement, type ReactNode } from 'react'
-import { ChevronDown, List, Pencil, Plus } from 'lucide-react'
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactElement, type ReactNode } from 'react'
+import { ChevronDown, List, Pencil, Plus, Redo2, Undo2 } from 'lucide-react'
 import type { Resume, Section, SectionType } from '@/resume/model'
 import { SECTION_TYPE_LABELS } from '@/resume/model'
 import { useResumeStore } from '@/state/useResumeStore'
 import { isItemSection } from '@/resume/sections'
 import { createResumeCommands, type ContentUndo } from '@/resume/commands'
-import { getSectionRegion, orderSections, placeLayoutSection, type SectionPlacement } from '@/resume/layout'
+import { getSectionRegion, orderSections, placeLayoutSection, splitSections, type SectionPlacement } from '@/resume/layout'
 import { usePageExitDraftFlush } from '@/state/editing/editorDraft'
 import { findResumeTarget, readResumeTarget, resolveResumeTarget, scrollToResumeTarget, type ResumeFocusRequest, type ResumeTarget } from '@/resume/focus'
 import { getTemplate } from '@/templates/registry'
 import { MarkdownField } from '../fields/MarkdownField'
+import { focusFirstSectionField } from '../fields/ModuleField'
 import { ModuleContentActions } from './ModuleContentActions'
 import { BasicsEditor } from './BasicsEditor'
 import { ItemsEditor } from './ItemsEditor'
 import { ModuleNavigation } from './ModuleNavigation'
 import { MODULE_CONFIG } from './moduleConfig'
+import { useModularHistory, type ModularSnapshot } from './useModularHistory'
 import { maximumModuleNavigationWidth, MIN_EXPANDED_MODULE_EDITOR_WIDTH, MIN_MODULE_NAVIGATION_WIDTH, responsiveModuleNavigationWidth, resolveModuleNavigationMode } from '@/shared/layout/workspaceLayout'
 
 interface Props {
@@ -28,15 +30,26 @@ interface Props {
 
 export function ModularEditor({ resume, isMobile, onRemove, renderToolbar, onTargetChange, focusRequest }: Props) {
   const commands = useMemo(() => createResumeCommands(resume.id, useResumeStore.getState), [resume.id])
+  const setSections = useResumeStore((state) => state.setSections)
   const setLayout = useResumeStore((state) => state.setLayout)
   const navigationWidth = useResumeStore((state) => state.moduleNavigationWidth)
+  const applyHistory = useCallback((snapshot: ModularSnapshot) => {
+    setSections(resume.id, snapshot.sections)
+    setLayout(resume.id, snapshot.layout)
+  }, [resume.id, setLayout, setSections])
+  const history = useModularHistory({ sections: resume.sections, layout: resume.layout, onApply: applyHistory })
   const [activeSectionId, setActiveSectionId] = useState<string | null>(() => resume.sections.find((section) => section.type === 'basics')?.id ?? orderSections(resume.sections, resume.layout?.order)[0]?.id ?? null)
   const [managingModules, setManagingModules] = useState(false)
   const [navigationCollapsed, setNavigationCollapsed] = useState(false)
   const [mobileDirectoryOpen, setMobileDirectoryOpen] = useState(false)
   const [editorWidth, setEditorWidth] = useState(0)
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(() => new Set())
-  const [collapsedItems, setCollapsedItems] = useState<Set<string>>(() => new Set(resume.sections.flatMap((section) => isItemSection(section) ? section.data.items.slice(1).map((item) => item.id) : [])))
+  const [collapsedItems, setCollapsedItems] = useState<Set<string>>(() => new Set(resume.sections.flatMap((section) => isItemSection(section)
+    ? [
+        ...section.data.items.slice(1).map((item) => item.id),
+        ...section.data.items.flatMap((item) => (item.projects ?? []).map((project) => project.id)),
+      ]
+    : [])))
   const directoryId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
   const navigationRef = useRef<HTMLElement>(null)
@@ -67,11 +80,11 @@ export function ModularEditor({ resume, isMobile, onRemove, renderToolbar, onTar
   usePageExitDraftFlush(() => {})
 
   const currentResume = commands.currentResume
-  const focus = (id: string) => requestAnimationFrame(() => {
+  const focus = useCallback((id: string) => requestAnimationFrame(() => {
     const target = document.getElementById(id)
     target?.scrollIntoView({ block: 'nearest' })
     target?.focus({ preventScroll: true })
-  })
+  }), [])
   const showSection = (sectionId: string, rename = false) => {
     setActiveSectionId(sectionId)
     onTargetChange({ resumeId: resume.id, sectionId })
@@ -114,7 +127,7 @@ export function ModularEditor({ resume, isMobile, onRemove, renderToolbar, onTar
     })
     onRemove(removal.undo)
   }
-  const removeItem = (sectionId: string, itemId: string, projectId?: string) => {
+  const removeItem = useCallback((sectionId: string, itemId: string, projectId?: string) => {
     const removal = commands.removeItem(sectionId, itemId, projectId)
     if (!removal) return
     requestAnimationFrame(() => {
@@ -124,7 +137,7 @@ export function ModularEditor({ resume, isMobile, onRemove, renderToolbar, onTar
       next?.focus({ preventScroll: true })
     })
     onRemove(removal.undo)
-  }
+  }, [commands, onRemove])
 
   const sidebar = getTemplate(resume.template).sidebar
   const ordered = orderSections(resume.sections, resume.layout?.order)
@@ -146,11 +159,18 @@ export function ModularEditor({ resume, isMobile, onRemove, renderToolbar, onTar
     if (!neighbor) return
     placeSection(section.id, { sectionId: neighbor.id, edge: direction < 0 ? 'before' : 'after' })
   }
+  const toggleSectionRegion = (section: Section) => {
+    if (!sidebar) return
+    const nextRegion = regionOf(section) === 'main' ? 'sidebar' : 'main'
+    const groups = splitSections(sections, resume.layout, sidebar.defaultSectionTypes)
+    const lastPeer = groups[nextRegion][groups[nextRegion].length - 1]
+    placeSection(section.id, { region: nextRegion, sectionId: lastPeer?.id, edge: 'after' })
+  }
 
   const renderBody = (section: Section): ReactElement => {
     switch (section.type) {
       case 'basics': return <BasicsEditor section={section} resume={resume} commands={commands} />
-      case 'experience': case 'education': case 'projects': return <ItemsEditor section={section} commands={commands} collapsedItems={collapsedItems} onToggle={toggleItem} onRemove={removeItem} onFocus={focus} />
+      case 'experience': case 'education': case 'projects': return <ItemsEditor section={section} commands={commands} collapsedItems={collapsedItems} onToggle={toggleItem} onExpand={expandItem} onRemove={removeItem} onFocus={focus} />
       case 'skills': case 'custom': return <MarkdownField field="content" label={section.type === 'skills' ? '技能内容' : '模块内容'} placeholder={section.type === 'skills' ? '按类别列出你的专业技能、工具与技术栈…' : '填写证书、荣誉、个人作品或其他补充内容…'} hint={section.type === 'skills' ? '按类别组织，优先填写与目标岗位相关的技能。' : '补充证书、荣誉或其他值得展示的内容。'} value={section.data.content} onChange={(content) => commands.setContent(section.id, content)} />
     }
   }
@@ -195,6 +215,7 @@ export function ModularEditor({ resume, isMobile, onRemove, renderToolbar, onTar
   const sectionActions = (section: Section) => {
     const name = section.title || SECTION_TYPE_LABELS[section.type]
     const peers = peersOf(section)
+    const region = sidebar ? regionOf(section) : undefined
     return <ModuleContentActions label={`模块：${name}`} onRename={() => showSection(section.id, true)}
       itemsCollapsed={isItemSection(section) && section.data.items.every((item) => collapsedItems.has(item.id))}
       onToggleItems={isItemSection(section) && section.data.items.length ? () => {
@@ -206,6 +227,8 @@ export function ModularEditor({ resume, isMobile, onRemove, renderToolbar, onTar
           return next
         })
       } : undefined}
+      region={region}
+      onToggleRegion={sidebar ? () => toggleSectionRegion(section) : undefined}
       index={peers.findIndex((candidate) => candidate.id === section.id)} count={peers.length}
       onMove={(direction) => moveSection(section, direction)}
       onDelete={section.type === 'basics' ? undefined : () => removeSection(section.id)} />
@@ -217,12 +240,18 @@ export function ModularEditor({ resume, isMobile, onRemove, renderToolbar, onTar
     else next.add(sectionId)
     return next
   })
-  const toggleItem = (itemId: string) => setCollapsedItems((previous) => {
+  const toggleItem = useCallback((itemId: string) => setCollapsedItems((previous) => {
     const next = new Set(previous)
     if (next.has(itemId)) next.delete(itemId)
     else next.add(itemId)
     return next
-  })
+  }), [])
+  const expandItem = useCallback((itemId: string) => setCollapsedItems((previous) => {
+    if (!previous.has(itemId)) return previous
+    const next = new Set(previous)
+    next.delete(itemId)
+    return next
+  }), [])
   // 布局阶段同步展开父级，再于下一帧定位，避免对尚未显示的字段调用 focus。
   useLayoutEffect(() => {
     if (!focusRequest) return
@@ -272,16 +301,43 @@ export function ModularEditor({ resume, isMobile, onRemove, renderToolbar, onTar
     return () => { document.removeEventListener('pointerdown', onPointerDown); document.removeEventListener('keydown', onKeyDown) }
   }, [navigationMode, mobileDirectoryOpen, isMobile])
 
-  const compactControls = <div className="module-compact-controls">
-    {sections.length > 0 && <label className="module-jump"><span className="sr-only">跳转到模块</span><select value={activeSection?.id ?? ''} onChange={(event) => showSection(event.target.value)}>{sections.map((section) => <option key={section.id} value={section.id}>{section.title || SECTION_TYPE_LABELS[section.type]}</option>)}</select><ChevronDown size={13} aria-hidden="true" /></label>}
-    <button ref={directoryToggleRef} type="button" className="module-navigation-button module-directory-toggle" aria-label={mobileDirectoryExpanded ? '收起模块目录' : '展开模块目录'} title="模块目录与管理" aria-expanded={mobileDirectoryExpanded} aria-controls={directoryId} onClick={() => { setMobileDirectoryOpen(!mobileDirectoryExpanded); if (mobileDirectoryExpanded) setManagingModules(false) }}><List size={16} /></button>
-  </div>
+  const handleHistoryKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!(event.metaKey || event.ctrlKey) || event.altKey) return
+    const key = event.key.toLowerCase()
+    const isUndo = key === 'z' && !event.shiftKey
+    const isRedo = (key === 'z' && event.shiftKey) || (event.ctrlKey && !event.metaKey && key === 'y')
+    if (!isUndo && !isRedo) return
+    const target = event.target as HTMLElement | null
+    if (target?.classList.contains('module-field-source')) return
+    const richField = target?.closest<HTMLElement>('.module-markdown-field')
+    if (richField && target?.closest('.module-field-prose[contenteditable="true"]')) {
+      if ((isUndo && richField.dataset.canUndo === 'true') || (isRedo && richField.dataset.canRedo === 'true')) return
+    }
+    if (isUndo && history.canUndo) {
+      event.preventDefault()
+      history.undo()
+    } else if (isRedo && history.canRedo) {
+      event.preventDefault()
+      history.redo()
+    }
+  }
 
-  return <div className="modular-editor" ref={rootRef} style={{ '--module-navigation-width': `${automaticNavigationWidth}px`, '--module-navigation-overlay-width': `${navigationWidth}px` } as CSSProperties} data-navigation-mode={navigationMode} data-navigation-density={navigationDensity} onFocusCapture={(event) => {
+  const toolbarControls = <>
+    <div className="module-history-controls" role="group" aria-label="表单撤销与重做">
+      <button type="button" className="module-navigation-button" aria-label="撤销" title="撤销（Ctrl/⌘ + Z）" disabled={!history.canUndo} onClick={history.undo}><Undo2 size={15} /></button>
+      <button type="button" className="module-navigation-button" aria-label="重做" title="重做（Ctrl/⌘ + Shift + Z）" disabled={!history.canRedo} onClick={history.redo}><Redo2 size={15} /></button>
+    </div>
+    <div className="module-compact-controls">
+      {sections.length > 0 && <label className="module-jump"><span className="sr-only">跳转到模块</span><select value={activeSection?.id ?? ''} onChange={(event) => showSection(event.target.value)}>{sections.map((section) => <option key={section.id} value={section.id}>{section.title || SECTION_TYPE_LABELS[section.type]}</option>)}</select><ChevronDown size={13} aria-hidden="true" /></label>}
+      <button ref={directoryToggleRef} type="button" className="module-navigation-button module-directory-toggle" aria-label={mobileDirectoryExpanded ? '收起模块目录' : '展开模块目录'} title="模块目录与管理" aria-expanded={mobileDirectoryExpanded} aria-controls={directoryId} onClick={() => { setMobileDirectoryOpen(!mobileDirectoryExpanded); if (mobileDirectoryExpanded) setManagingModules(false) }}><List size={16} /></button>
+    </div>
+  </>
+
+  return <div className="modular-editor" ref={rootRef} style={{ '--module-navigation-width': `${automaticNavigationWidth}px`, '--module-navigation-overlay-width': `${navigationWidth}px` } as CSSProperties} data-navigation-mode={navigationMode} data-navigation-density={navigationDensity} onKeyDown={handleHistoryKeyDown} onFocusCapture={(event) => {
     const target = readResumeTarget(event.target, event.currentTarget, resume.id)
     if (target) onTargetChange(target)
   }}>
-    {renderToolbar(compactControls)}
+    {renderToolbar(toolbarControls)}
     <ModuleNavigation resume={resume} sections={sections} activeSectionId={activeSection?.id} id={directoryId} navigationRef={navigationRef} mode={navigationMode} width={navigationPanelWidth} maximumWidth={maxNavigationWidth} managing={managingModules}
       onSelect={showSection} onPlace={placeSection} onAdd={addSection} renderActions={sectionActions}
       onToggleManaging={() => { setManagingModules(!managingModules); setNavigationCollapsed(false) }}
@@ -295,15 +351,33 @@ export function ModularEditor({ resume, isMobile, onRemove, renderToolbar, onTar
       const collapsed = collapsedSections.has(section.id)
       const name = section.title || SECTION_TYPE_LABELS[section.type]
       const Icon = MODULE_CONFIG[section.type].icon
+      const region = sidebar ? regionOf(section) : undefined
       return <section key={section.id} id={`module-panel-${section.id}`} className="module-detail" data-section-id={section.id} data-resume-section={section.id} data-collapsed={collapsed} data-active={activeSection?.id === section.id} aria-labelledby={`module-heading-${section.id}`}>
       <header className="module-detail-heading">
         <h2 id={`module-heading-${section.id}`} className="sr-only">{name}</h2>
         <div className="module-title-row">
           <span className="module-section-icon" aria-hidden="true"><Icon size={19} /></span>
           <div className="module-heading-copy">
-            <div className="module-heading-title" data-resume-field="heading"><input id={`module-title-${section.id}`} className="module-title-input" aria-label="模块标题" aria-describedby={`module-description-${section.id}`} title="点击修改模块标题" placeholder={SECTION_TYPE_LABELS[section.type]} value={section.title} onChange={(event) => commands.renameSection(section.id, event.target.value)} /><Pencil className="module-title-edit" size={12} aria-hidden="true" /></div>
+            <div className="module-heading-title" data-resume-field="heading"><input id={`module-title-${section.id}`} className="module-title-input" aria-label="模块标题" aria-describedby={`module-description-${section.id}`} title="点击修改模块标题" enterKeyHint="next" placeholder={SECTION_TYPE_LABELS[section.type]} value={section.title} onChange={(event) => commands.renameSection(section.id, event.target.value)} onKeyDown={(event) => {
+              if (event.key !== 'Enter' || event.nativeEvent.isComposing || event.keyCode === 229 || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return
+              const panel = event.currentTarget.closest('.module-detail')
+              if (!panel) return
+              event.preventDefault()
+              if (collapsed) {
+                setCollapsedSections((previous) => {
+                  if (!previous.has(section.id)) return previous
+                  const next = new Set(previous)
+                  next.delete(section.id)
+                  return next
+                })
+                requestAnimationFrame(() => focusFirstSectionField(panel))
+              } else {
+                focusFirstSectionField(panel)
+              }
+            }} /><Pencil className="module-title-edit" size={12} aria-hidden="true" /></div>
             <p id={`module-description-${section.id}`} className="module-section-description">{MODULE_CONFIG[section.type].description}</p>
           </div>
+          {region && <button type="button" className="module-region-badge" data-region={region} onClick={() => toggleSectionRegion(section)} title={region === 'main' ? '当前位于主栏，点击移至侧栏' : '当前位于侧栏，点击移至主栏'} aria-label={`${name}当前位于${region === 'main' ? '主栏' : '侧栏'}，点击切换分栏`}>{region === 'main' ? '主栏' : '侧栏'}</button>}
           <button type="button" className="module-icon-button module-collapse-button" aria-label={`${collapsed ? '展开' : '收起'}模块：${name}`} title={collapsed ? '展开模块' : '收起模块'} aria-expanded={!collapsed} aria-controls={`module-body-${section.id}`} onClick={() => toggleSection(section.id)}><ChevronDown size={16} /></button>
           {sectionActions(section)}
         </div>

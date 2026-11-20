@@ -43,8 +43,17 @@ export default function App() {
   const uiTheme = useResumeStore((s) => s.uiTheme)
   const current = useCurrentResume()
   const [mode, setMode] = useState<EditMode>('modules')
-  const [contentUndo, setContentUndo] = useState<ContentUndo | null>(null)
-  const closeContentUndo = useCallback(() => setContentUndo(null), [])
+  const [contentUndoStack, setContentUndoStack] = useState<ContentUndo[]>([])
+  const pushContentUndo = useCallback((undo: ContentUndo) => {
+    setContentUndoStack((previous) => [...previous.slice(-4), undo])
+  }, [])
+  const popContentUndo = useCallback(() => {
+    setContentUndoStack((previous) => previous.slice(0, -1))
+  }, [])
+  const clearContentUndo = useCallback(() => setContentUndoStack([]), [])
+  useEffect(() => {
+    setContentUndoStack([])
+  }, [current?.id])
   const changeMode = (next: EditMode) => {
     // 在下一编辑器读取 sections 前完成提交，避免靠卸载 cleanup 与挂载顺序碰运气。
     flushSync(flushActiveEditorDraft)
@@ -184,13 +193,28 @@ export default function App() {
               ) : (
                 <Suspense fallback={<div className="editor-loading">正在加载编辑器…</div>}>
                   {mode === 'modules'
-                    ? <ModularEditor key={current.id} resume={current} isMobile={isCompact} onRemove={setContentUndo} renderToolbar={editorToolbar} onTargetChange={highlightTarget} focusRequest={editorFocusRequest} />
+                    ? <ModularEditor key={current.id} resume={current} isMobile={isCompact} onRemove={pushContentUndo} renderToolbar={editorToolbar} onTargetChange={highlightTarget} focusRequest={editorFocusRequest} />
                     : <RichEditor key={current.id} resume={current} />}
                 </Suspense>
               )}
               <footer className="editor-status-bar">
                 <span><HardDrive size={12} />仅保存在当前浏览器</span>
-                <span>{current.sections.filter((section) => section.type !== 'basics').length} 个内容章节</span>
+                <span className="editor-status-meta">
+                  {previewLayout && previewLayout.resumeId === current.id ? (
+                    <span className={`editor-page-indicator${previewLayout.result === 'overflow' ? ' is-overflow' : ''}`}>
+                      {previewLayout.pending
+                        ? '测量页数中…'
+                        : previewLayout.error
+                          ? '分页失败'
+                          : previewLayout.result === 'compressed'
+                            ? `共 ${previewLayout.pageCount} 页 · 已压缩`
+                            : previewLayout.result === 'overflow'
+                              ? `共 ${previewLayout.pageCount} 页 · 超出 1 页`
+                              : `共 ${previewLayout.pageCount} 页`}
+                    </span>
+                  ) : null}
+                  <span>{current.sections.filter((section) => section.type !== 'basics').length} 个内容章节</span>
+                </span>
               </footer>
             </section>
             <ResizeHandle ratio={editorRatio} onRatioChange={setEditorRatio} disabled={isCompact} />
@@ -221,7 +245,7 @@ export default function App() {
         )}
       </main>
       <UndoDeleteToast />
-      <ContentDeleteToast undo={contentUndo} onClose={closeContentUndo} />
+      <ContentDeleteToast stack={contentUndoStack} onPop={popContentUndo} onClear={clearContentUndo} />
     </div>
   )
 }

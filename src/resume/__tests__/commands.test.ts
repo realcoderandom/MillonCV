@@ -123,4 +123,32 @@ describe('模块编辑命令的状态边界', () => {
     expect(resumes()).toEqual([other])
     expect(resumes()[0]).toBe(other)
   })
+
+  it('支持顶部插入、复制条目与子项目（分配独立 id）及按目标位置重排', () => {
+    const { commands, current, items } = setup()
+    const newest = commands.addItem('experience', undefined, 'start')!
+    expect(items()[0].id).toBe(newest.id)
+    expect(items().map((item) => item.id)).toEqual([newest.id, 'first', 'second'])
+
+    const copy = commands.duplicateItem('experience', 'first')!
+    expect(copy.id).not.toBe('first')
+    expect(copy.title).toBe('第一家公司')
+    expect(copy.projects?.[0].id).toBeDefined()
+    expect(copy.projects?.[0].id).not.toBe('child')
+    expect(items().map((item) => item.id)).toEqual([newest.id, 'first', copy.id, 'second'])
+
+    const childCopy = commands.duplicateItem('experience', 'first', 'child')!
+    expect(childCopy.id).not.toBe('child')
+    expect(items()[1].projects?.map((project) => project.id)).toEqual(['child', childCopy.id])
+
+    commands.placeProject('experience', 'first', childCopy.id, 'child', 'before')
+    expect(items()[1].projects?.map((project) => project.id)).toEqual([childCopy.id, 'child'])
+
+    const snapshot = current()
+    commands.placeItem('experience', 'second', copy.id, 'after')
+    expect(current()).toBe(snapshot)
+
+    commands.placeItem('experience', 'second', newest.id, 'before')
+    expect(items().map((item) => item.id)).toEqual(['second', newest.id, 'first', copy.id])
+  })
 })

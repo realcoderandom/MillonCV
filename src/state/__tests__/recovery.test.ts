@@ -516,4 +516,15 @@ describe('简历恢复机制', () => {
     state.restoreSnapshot(resume.id, snapshot.id)
     expect(serializeResume(useResumeStore.getState().resumes[0])).toBe(markdown)
   })
+
+  it('新建简历提供空白字段与标准模块骨架，且可无损往返 Markdown', () => {
+    const id = useResumeStore.getState().createResume('前端研发')
+    const created = useResumeStore.getState().resumes.find((resume) => resume.id === id)!
+    expect(created.name).toBe('前端研发')
+    expect(created.sections.map((section) => section.type)).toEqual(['basics', 'experience', 'education', 'skills'])
+    expect(created.sections[0]).toMatchObject({ type: 'basics', data: { name: '', title: '' } })
+    const parsed = parseMarkdownWithDiagnostics(serializeResume(created), created.sections)
+    expect(parsed.diagnostics).toEqual([])
+    expect(parsed.sections).toEqual(created.sections)
+  })
 })

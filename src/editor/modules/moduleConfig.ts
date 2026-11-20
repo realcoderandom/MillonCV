@@ -17,6 +17,8 @@ export interface ItemLabels {
   subtitle: string
   description: string
   subtitlePlaceholder: string
+  rightTextLabel: string
+  rightTextPlaceholder: string
   placeholder: string
   hint: string
 }
@@ -24,21 +26,32 @@ export interface ItemLabels {
 export const ITEM_LABELS = {
   experience: {
     noun: '经历', title: '公司名称', subtitle: '职位', description: '工作描述',
-    subtitlePlaceholder: '如：高级前端工程师', placeholder: '分条描述你的工作职责、贡献与成果…',
+    subtitlePlaceholder: '如：高级前端工程师',
+    rightTextLabel: '时间 / 补充信息', rightTextPlaceholder: '如：2023.06 — 至今',
+    placeholder: '分条描述你的工作职责、贡献与成果…',
     emptyHint: '记录你的工作职责，突出贡献与成果', hint: '写清你做了什么，以及带来的具体成果。',
+    subprojectButton: '添加子项目',
   },
   education: {
     noun: '教育经历', title: '学校名称', subtitle: '专业与学位', description: '教育补充说明',
-    subtitlePlaceholder: '如：计算机科学 · 本科', placeholder: '补充专业成绩、研究方向或校园经历…',
+    subtitlePlaceholder: '如：计算机科学 · 本科',
+    rightTextLabel: '时间 / GPA', rightTextPlaceholder: '如：2019.09 — 2023.06 · GPA 3.8',
+    placeholder: '补充专业成绩、研究方向或校园经历…',
     emptyHint: '填写学校、专业与学位，补充学习经历', hint: '可补充成绩、研究方向或与岗位相关的学习经历。',
+    subprojectButton: '添加补充课题',
   },
   projects: {
     noun: '项目', title: '项目名称', subtitle: '担任角色', description: '项目描述',
-    subtitlePlaceholder: '如：项目负责人', placeholder: '介绍项目背景、你的贡献和最终成果…',
+    subtitlePlaceholder: '如：项目负责人',
+    rightTextLabel: '时间 / 补充信息', rightTextPlaceholder: '如：2024.01 — 2024.10',
+    placeholder: '介绍项目背景、你的贡献和最终成果…',
     emptyHint: '介绍你参与的项目，展示解决问题的能力', hint: '围绕项目背景、你的贡献与最终成果展开。',
+    subprojectButton: '添加子项目',
   },
   subproject: {
     noun: '子项目', title: '子项目名称', subtitle: '担任角色', description: '子项目描述',
-    subtitlePlaceholder: '如：核心开发者', placeholder: '描述你在这个子项目中的工作与成果…', hint: '聚焦这个子项目中的工作与成果。',
+    subtitlePlaceholder: '如：核心开发者',
+    rightTextLabel: '时间 / 补充信息', rightTextPlaceholder: '如：2024.01 — 2024.06',
+    placeholder: '描述你在这个子项目中的工作与成果…', hint: '聚焦这个子项目中的工作与成果。',
   },
-} satisfies Record<ItemSection['type'], ItemLabels & { emptyHint: string }> & Record<'subproject', ItemLabels>
+} satisfies Record<ItemSection['type'], ItemLabels & { emptyHint: string; subprojectButton: string }> & Record<'subproject', ItemLabels>

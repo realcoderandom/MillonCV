@@ -23,10 +23,10 @@ The interface is currently in Chinese. The usage steps below include the Chinese
 | Feature | What you can do |
 |---|---|
 | Three editing modes | Fill in module forms, write in the document editor, or edit Markdown directly; all three modes share the same resume content |
-| Experience and modules | Manage work experience, projects, education, skills, and custom modules; add one level of subprojects, reorder modules, and arrange main and sidebar columns in supported templates |
-| Templates and typography | Choose from seven templates; adjust colors, fonts, font sizes, line spacing, margins, and headings; upload a photo and change its display size |
-| Live paginated preview | See the actual A4 page count, click preview content to locate its editor field, and use Smart One Page to tighten content that slightly exceeds one page while preserving readability |
-| Multiple resumes and recovery | Create, duplicate, rename, and switch resumes; save locally, restore historical snapshots, and undo deletion |
+| Experience and modules | Manage work experience, projects, education, skills, and custom modules; duplicate or prepend entries, add one level of subprojects, reorder modules and items by drag-and-drop or keyboard, and toggle main/sidebar columns in two-column templates |
+| Templates and typography | Choose from seven templates; adjust colors, fonts, font sizes, line spacing, margins, and headings; click or drag to upload a photo, and adjust its crop and display size |
+| Live paginated preview | Track the actual A4 page count in both the preview and editor status bars, click preview content to jump to its form field, and use Smart One Page to tighten content that slightly exceeds one page while preserving readability |
+| Multiple resumes and recovery | Create (with a clean starter skeleton), duplicate, rename, and switch resumes; save locally with form-level undo/redo, queued delete undo, and historical snapshots |
 | Backups and export | Import and export Markdown, save PDFs through browser printing, and switch between editing and preview on mobile |
 
 Available templates: **Classic (经典), Technical Compact (技术精简), Academic (学术), Accent (重点色), Minimal (简约), Business (商务), and Modern (现代)**. Five legacy templates remain supported so existing resumes retain their original layouts.
@@ -57,11 +57,11 @@ The app runs entirely in the browser. Build output is written to `dist/` and can
 
 ## Usage
 
-1. **Create a version for a role.** Open the resume name menu in the top toolbar to create or duplicate a resume. The version name is separate from the person's name in the resume, so you can keep different versions for different applications.
-2. **Fill in and organize your experience.** Module editing (`模块编辑`) is the default. Fill in fields, add experience entries, subprojects, or custom modules, and use the module navigation to change their order. Templates with two columns also let you arrange the main and sidebar content.
-3. **Choose an editing mode.** Use the menu at the top left of the editor to switch between module editing (`模块编辑`), document editing (`文档编辑`), and Markdown. Click preview content to locate its form field. On mobile, use Preview (`预览`) and the return button to switch views.
-4. **Adjust the layout.** Use the preview toolbar to choose a template, upload a photo, and adjust its size. Colors (`配色`) offers six common colors and two additional choices while preserving typography. A complete style (`整套风格`) applies color, font, and spacing together; Layout (`排版`) lets you adjust individual settings.
-5. **Check saving and make a backup.** Check the save status in the top toolbar, restore a snapshot, or undo a deletion when needed. Back Up Markdown (`备份 Markdown`) exports the current content. Import is available under More File Actions (`更多文件操作`).
+1. **Create a version for a role.** Open the resume name menu in the top toolbar to create or duplicate a resume. New resumes start with a blank Basics, Experience, Education, and Skills skeleton; the version name is separate from the candidate's name so you can maintain tailored versions for different roles.
+2. **Fill in and organize your experience.** Module editing (`模块编辑`) is the default. Prepend your latest entry at the top, duplicate items, add subprojects or custom modules, and drag or use arrow keys to reorder both modules and entries. Two-column templates also let you toggle main and sidebar placement directly in the navigation or form header.
+3. **Choose an editing mode.** Use the menu at the top left of the editor to switch between module editing (`模块编辑`), document editing (`文档编辑`), and Markdown. Module editing supports continuous keyboard entry (`Enter`, `Tab`, `Ctrl/⌘ + Enter`) and form-level undo/redo (`Ctrl/⌘ + Z`). Click preview content to locate its form field; on mobile, use Preview (`预览`) and the return button to switch views.
+4. **Adjust the layout.** Use the preview toolbar to choose a template, or click/drag directly onto the portrait slot in the form to upload a photo and fine-tune its crop and size. Colors (`配色`) offers six common colors and two additional choices while preserving typography. A complete style (`整套风格`) applies color, font, and spacing together; Layout (`排版`) lets you adjust individual settings.
+5. **Check saving and make a backup.** Check the save status in the top toolbar, use form undo, queued delete undo, or historical snapshots when needed. Back Up Markdown (`备份 Markdown`) exports the current content. Import is available under More File Actions (`更多文件操作`).
 6. **Save a PDF.** Click Export PDF (`导出 PDF`) and wait for pagination and fonts to be ready. In the browser print dialog, choose **Save as PDF, A4, 100% scale, and no headers or footers**. Enable background graphics if you want the template colors. Open the saved file to check page count and line breaks.
 
 Smart One Page (`智能一页`) is intended for resumes that slightly exceed one page. Longer content retains readable text sizes and multiple pages; you may still need to shorten it. The final PDF filename is controlled by the browser's save dialog.

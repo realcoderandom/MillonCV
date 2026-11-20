@@ -18,7 +18,20 @@ export function isResumePhoto(value: unknown): value is string {
     && /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(value)
 }
 
-export async function prepareResumePhoto(file: File): Promise<string> {
+export interface PhotoCropOptions {
+  /** 放大倍数，1–2，默认 1（铺满 7:9 证件照比例） */
+  zoom?: number
+  /** 水平裁切偏移，-1（最左）到 1（最右），默认 0（居中） */
+  offsetX?: number
+  /** 垂直裁切偏移，-1（最上）到 1（最下），默认 0（居中） */
+  offsetY?: number
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : min
+}
+
+export async function prepareResumePhoto(file: File, options?: PhotoCropOptions): Promise<string> {
   if (!PHOTO_TYPES.has(file.type)) throw new Error('请选择 JPG、PNG 或 WebP 图片。')
   if (file.size > 10 * 1024 * 1024) throw new Error('图片超过 10 MB，请选择较小的照片。')
   let bitmap: ImageBitmap
@@ -31,9 +44,16 @@ export async function prepareResumePhoto(file: File): Promise<string> {
     // 对应 28 × 36 mm 的证件照，保留约 300 dpi 的打印分辨率。
     const width = 336
     const height = 432
-    const scale = Math.max(width / bitmap.width, height / bitmap.height)
+    const zoom = clamp(options?.zoom ?? 1, 1, 2)
+    const offsetX = clamp(options?.offsetX ?? 0, -1, 1)
+    const offsetY = clamp(options?.offsetY ?? 0, -1, 1)
+    const scale = Math.max(width / bitmap.width, height / bitmap.height) * zoom
     const sourceWidth = width / scale
     const sourceHeight = height / scale
+    const maxShiftX = Math.max(0, (bitmap.width - sourceWidth) / 2)
+    const maxShiftY = Math.max(0, (bitmap.height - sourceHeight) / 2)
+    const sx = (bitmap.width - sourceWidth) / 2 + offsetX * maxShiftX
+    const sy = (bitmap.height - sourceHeight) / 2 + offsetY * maxShiftY
     const canvas = document.createElement('canvas')
     canvas.width = width
     canvas.height = height
@@ -41,8 +61,7 @@ export async function prepareResumePhoto(file: File): Promise<string> {
     if (!context) throw new Error('浏览器暂时无法处理图片，请重试。')
     context.fillStyle = '#fff'
     context.fillRect(0, 0, width, height)
-    context.drawImage(bitmap, (bitmap.width - sourceWidth) / 2, (bitmap.height - sourceHeight) / 2,
-      sourceWidth, sourceHeight, 0, 0, width, height)
+    context.drawImage(bitmap, sx, sy, sourceWidth, sourceHeight, 0, 0, width, height)
     for (const quality of [0.88, 0.75, 0.6, 0.45, 0.3, 0.2]) {
       const result = canvas.toDataURL('image/jpeg', quality)
       if (isResumePhoto(result)) return result

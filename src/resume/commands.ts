@@ -1,6 +1,6 @@
 import type { BasicsData, Contact, DatedItem, Resume, ResumeLayout, Section, SectionType, Subproject } from './model'
 import { SECTION_TYPE_LABELS } from './model'
-import { createItem, createSection, isItemSection, moveItem as moveById } from './sections'
+import { cloneItem, cloneSubproject, createItem, createSection, isItemSection, moveItem as moveById, placeItem as placeById } from './sections'
 import { orderSections } from './layout'
 import { uid } from '@/shared/lib/id'
 
@@ -106,10 +106,34 @@ export function createResumeCommands(resumeId: string, getState: () => CommandSt
     } }
   }
 
+  function duplicateItem(sectionId: string, itemId: string): DatedItem | undefined
+  function duplicateItem(sectionId: string, itemId: string, projectId: string): Subproject | undefined
+  function duplicateItem(sectionId: string, itemId: string, projectId?: string): DatedItem | Subproject | undefined
+  function duplicateItem(sectionId: string, itemId: string, projectId?: string) {
+    const section = currentResume()?.sections.find((section) => section.id === sectionId)
+    if (!section || !isItemSection(section)) return
+    const index = section.data.items.findIndex((item) => item.id === itemId)
+    const item = section.data.items[index]
+    if (!item) return
+    if (projectId) {
+      const projects = item.projects ?? []
+      const projectIndex = projects.findIndex((project) => project.id === projectId)
+      const project = projects[projectIndex]
+      if (!project) return
+      const copy = cloneSubproject(project)
+      updateProjects(sectionId, itemId, (values) => [...values.slice(0, projectIndex + 1), copy, ...values.slice(projectIndex + 1)])
+      return copy
+    }
+    const copy = cloneItem(item)
+    updateItems(sectionId, (items) => [...items.slice(0, index + 1), copy, ...items.slice(index + 1)])
+    return copy
+  }
+
   return {
     currentResume,
     removeSection,
     removeItem,
+    duplicateItem,
     addSection(type: SectionType) {
       const current = currentResume()
       if (!current || (type === 'basics' && current.sections.some((section) => section.type === 'basics'))) return
@@ -117,12 +141,12 @@ export function createResumeCommands(resumeId: string, getState: () => CommandSt
       getState().setSections(resumeId, (sections) => type === 'basics' ? [section, ...sections] : [...sections, section])
       return section
     },
-    addItem(sectionId: string, parentId?: string) {
+    addItem(sectionId: string, parentId?: string, position: 'start' | 'end' = 'end') {
       const section = currentResume()?.sections.find((section) => section.id === sectionId)
       if (!section || !isItemSection(section) || (parentId && !section.data.items.some((item) => item.id === parentId))) return
       const item = createItem()
-      if (parentId) updateProjects(sectionId, parentId, (projects) => [...projects, item])
-      else updateItems(sectionId, (items) => [...items, item])
+      if (parentId) updateProjects(sectionId, parentId, (projects) => position === 'start' ? [item, ...projects] : [...projects, item])
+      else updateItems(sectionId, (items) => position === 'start' ? [item, ...items] : [...items, item])
       return item
     },
     renameSection(sectionId: string, title: string) {
@@ -156,8 +180,14 @@ export function createResumeCommands(resumeId: string, getState: () => CommandSt
     moveItem(sectionId: string, itemId: string, direction: -1 | 1) {
       updateItems(sectionId, (items) => moveById(items, itemId, direction))
     },
+    placeItem(sectionId: string, itemId: string, targetId: string, edge: 'before' | 'after') {
+      updateItems(sectionId, (items) => placeById(items, itemId, targetId, edge))
+    },
     moveProject(sectionId: string, itemId: string, projectId: string, direction: -1 | 1) {
       updateProjects(sectionId, itemId, (projects) => moveById(projects, projectId, direction))
+    },
+    placeProject(sectionId: string, itemId: string, projectId: string, targetId: string, edge: 'before' | 'after') {
+      updateProjects(sectionId, itemId, (projects) => placeById(projects, projectId, targetId, edge))
     },
   }
 }

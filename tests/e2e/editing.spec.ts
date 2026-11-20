@@ -46,6 +46,7 @@ test('分隔符标题和子项目经过源码、富文本及备份导入仍保�
   const project = page.locator('.modular-editor [data-resume-project="project"]')
   await item.getByRole('textbox', { name: '公司名称', exact: true }).fill('平台 — 国内 || 业务')
   await item.getByRole('textbox', { name: '职位', exact: true }).fill('开发 || 运维 — 顾问')
+  await page.getByRole('button', { name: '展开子项目：检索系统', exact: true }).click()
   await project.getByRole('textbox', { name: '子项目名称', exact: true }).fill('检索 — 召回 || 重排')
   await project.getByRole('textbox', { name: '担任角色', exact: true }).fill('架构 — 顾问')
   await switchMode(page, 'Markdown')
@@ -59,6 +60,7 @@ test('分隔符标题和子项目经过源码、富文本及备份导入仍保�
   await switchMode(page, '模块编辑')
   await expect(item.getByRole('textbox', { name: '公司名称', exact: true })).toHaveValue('平台 — 国内 || 业务')
   await expect(item.getByRole('textbox', { name: '职位', exact: true })).toHaveValue('开发 || 运维 — 顾问')
+  await page.getByRole('button', { name: '展开子项目：检索 — 召回 || 重排', exact: true }).click()
   await expect(project.getByRole('textbox', { name: '子项目名称', exact: true })).toHaveValue('检索 — 召回 || 重排')
   const before = (await readStoredState(page)).resumes[0].sections
 
