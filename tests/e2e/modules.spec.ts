@@ -88,8 +88,8 @@ test('表单初始折叠与键盘连续录入体验：已填网址默认展开�
   await expect(rightText).toBeFocused()
 
   // 新建简历不含字面量占位值，自带标准骨架，且空网站折叠收起
-  await page.getByRole('button', { name: /^简历版本：/ }).click()
-  await page.getByRole('button', { name: '新建简历版本', exact: true }).click()
+  await page.getByRole('button', { name: /^当前简历：/ }).click()
+  await page.getByRole('button', { name: '新建简历', exact: true }).click()
   await page.keyboard.press('Enter')
   await expect(page.getByRole('textbox', { name: '姓名', exact: true })).toHaveValue('')
   await expect(page.getByRole('textbox', { name: '求职职位', exact: true })).toHaveValue('')

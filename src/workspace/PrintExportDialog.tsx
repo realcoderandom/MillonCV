@@ -130,12 +130,12 @@ export function PrintExportDialog({ resume, layoutStatus, onClose, onPrint, rest
             {checkRow(
               !missingName,
               missingName ? '正文姓名为空' : `候选人：${readiness.candidateName}`,
-              missingName ? '建议先补充姓名，避免导出一份无法识别归属的简历。' : '姓名来自简历正文，不是顶部的版本名称。',
+              missingName ? '建议先补充姓名，避免导出一份无法识别归属的简历。' : '姓名来自简历正文，不是顶部的简历名称。',
             )}
             {checkRow(
               true,
-              `版本名称：${resume.name}`,
-              '版本名称只用于管理不同岗位版本，不会出现在简历正文中。',
+              `简历名称：${resume.name}`,
+              '简历名称只用于区分不同简历，不会出现在正文中。',
             )}
             {unsafeOverflow && checkRow(
               false,

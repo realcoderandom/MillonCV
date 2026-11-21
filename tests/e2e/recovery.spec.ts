@@ -3,12 +3,12 @@ import { test, expect, openResume, readStoredState, resumeFixture, seedStorage, 
 
 test('首次空存储创建一份示例，刷新后继续使用同一份数据', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('button', { name: /^简历版本：示例简历/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^当前简历：示例简历/ })).toBeVisible()
   await expect.poll(() => page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY)).not.toBeNull()
   const before = await readStoredState(page)
   expect(before.resumes).toHaveLength(1)
   await page.reload()
-  await expect(page.getByRole('button', { name: /^简历版本：示例简历/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^当前简历：示例简历/ })).toBeVisible()
   const after = await readStoredState(page)
   expect(after.resumes.map((resume) => resume.id)).toEqual(before.resumes.map((resume) => resume.id))
 })
